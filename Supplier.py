@@ -1,3 +1,5 @@
+from person import Person
+
 class Supplier(Person):
 
     def __init__(self, name, email, person_id):
