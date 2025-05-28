@@ -1,26 +1,46 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from app.item import Item
 
 class Inventory:
     def __init__(self):
-        self.stock: Dict[Item, int] = {}
+        # Each item maps to a tuple: (quantity, threshold)
+        self.stock: Dict[Item, Tuple[int, int]] = {}
 
-    def add_stock(self, item: Item, quantity: int) -> None:
-        self.stock[item] = self.stock.get(item, 0) + quantity
+    def add_stock(self, item: Item, quantity: int, threshold: int = None) -> None:
+        if item in self.stock:
+            current_qty, current_threshold = self.stock[item]
+            new_threshold = threshold if threshold is not None else current_threshold
+            self.stock[item] = (current_qty + quantity, new_threshold)
+        else:
+            self.stock[item] = (quantity, threshold if threshold is not None else 5)
 
     def remove_stock(self, item: Item, quantity: int) -> None:
-        if item in self.stock and self.stock[item] >= quantity:
-            self.stock[item] -= quantity
-            if self.stock[item] == 0:
+        if item in self.stock and self.stock[item][0] >= quantity:
+            current_qty, threshold = self.stock[item]
+            new_qty = current_qty - quantity
+            if new_qty == 0:
                 del self.stock[item]
+            else:
+                self.stock[item] = (new_qty, threshold)
         else:
             raise ValueError("Insufficient stock")
 
     def check_stock(self, item: Item) -> int:
-        return self.stock.get(item, 0)
+        return self.stock.get(item, (0, 0))[0]
 
-    def low_stock_alerts(self, threshold: int = 5) -> List[Item]:
-        return [item for item, qty in self.stock.items() if qty < threshold]
+    def set_threshold(self, item: Item, threshold: int) -> None:
+        if item in self.stock:
+            quantity, _ = self.stock[item]
+            self.stock[item] = (quantity, threshold)
+        else:
+            raise ValueError("Item not found in inventory")
+
+    def low_stock_alerts(self) -> List[Item]:
+        return [item for item, (qty, threshold) in self.stock.items() if qty < threshold]
 
     def get_all_stock(self) -> Dict[Item, int]:
+        return {item: qty for item, (qty, _) in self.stock.items()}
+
+    def get_full_stock_info(self) -> Dict[Item, Tuple[int, int]]:
         return dict(self.stock)
+

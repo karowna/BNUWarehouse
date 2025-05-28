@@ -39,5 +39,3 @@ class Warehouse:
         self.inventory.add_stock(item, quantity)
         return self._record_transaction(item, quantity, buyer=self, seller=supplier)
 
-
-

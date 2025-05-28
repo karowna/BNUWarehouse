@@ -1,37 +1,4 @@
-from app.supplier import Supplier, SupplierManager
-
-supplier_manager = SupplierManager()
-
-# Create mock suppliers
-supplier_manager.create_supplier("Supplier A", "mocksupplier@mockemail.com", "1")
-supplier_manager.create_supplier("Supplier B", "anothermocksupplier@mockemail.com", "2")
-# Create mock items for suppliers
-supplier_manager.create_supplier_item(
-    supplier_id="1",
-    name="Item A1",
-    description="Description for Item A1",
-    price=10.99
-)
-supplier_manager.create_supplier_item(
-    supplier_id="1",
-    name="Item A2",
-    description="Description for Item A2",
-    price=15.49
-)
-supplier_manager.create_supplier_item(
-    supplier_id="2",
-    name="Item B1",
-    description="Description for Item B1",
-    price=20.00
-)
-supplier_manager.create_supplier_item(
-    supplier_id="2",
-    name="Item B2",
-    description="Description for Item B2",
-    price=25.75
-)
-
-def supplier_login():
+def supplier_login(supplier_manager):
     while True:
         print("\n--- Supplier Login ---")
         print("1. Sign Up")
@@ -40,15 +7,15 @@ def supplier_login():
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            supplier_sign_up()
+            supplier_sign_up(supplier_manager)
         elif choice == '2':
-            supplier_sign_in()
+            supplier_sign_in(supplier_manager)
         elif choice == '0':
             break
         else:
             print("Invalid choice. Please try again.")
 
-def supplier_sign_up():
+def supplier_sign_up(supplier_manager):
     name = input("Enter your name: ")
     email = input("Enter your email: ")
     supplier_id = input("Enter a unique supplier ID: ")
@@ -58,11 +25,11 @@ def supplier_sign_up():
     except ValueError as e:
         print(e)
 
-def supplier_sign_in():
+def supplier_sign_in(supplier_manager):
     supplier_id = input("Enter your supplier ID: ")
     supplier = supplier_manager.get_supplier_by_id(supplier_id)
     if supplier:
-        print(f"Welcome back, {supplier.name}!")
+        print(f"\nWelcome back, {supplier.name}!")
         supplier_menu(supplier)
     else:
         print("Supplier not found. Please sign up first.")

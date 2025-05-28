@@ -1,12 +1,4 @@
-from app.customer import Customer, CustomerManager
-
-customer_manager = CustomerManager()
-
-# Create mock customers for demonstration
-customer_manager.create_customer("Bkar", "mock@mockemail.com", "1")
-customer_manager.create_customer("Aisha","anothermock@mockemail.com","2")
-
-def customer_login():
+def customer_login(customer_manager, warehouse):
     while True:
         print("\n--- Customer Login ---")
         print("1. Sign Up")
@@ -15,15 +7,15 @@ def customer_login():
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            sign_up()
+            sign_up(customer_manager)
         elif choice == '2':
-            sign_in()
+            sign_in(customer_manager, warehouse)
         elif choice == '0':
             break
         else:
             print("Invalid choice. Please try again.")
 
-def sign_up():
+def sign_up(customer_manager):
     name = input("Enter your name: ")
     email = input("Enter your email: ")
     customer_id = input("Enter a unique customer ID: ")
@@ -33,16 +25,16 @@ def sign_up():
     except ValueError as e:
         print(e)
 
-def sign_in():
+def sign_in(customer_manager, warehouse):
     customer_id = input("Enter your customer ID: ")
     customer = customer_manager.get_customer_by_id(customer_id)
     if customer:
-        print(f"Welcome back, {customer.name}!")
-        customer_menu(customer)
+        print(f"\nWelcome back, {customer.name}!")
+        customer_menu(customer, warehouse)
     else:
         print("Customer not found. Please sign up first.")
 
-def customer_menu(customer):
+def customer_menu(customer, warehouse):
     while True:
         print("\n--- Customer Menu ---")
         print("1. Browse Warehouse Items")
@@ -54,16 +46,28 @@ def customer_menu(customer):
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            view_profile(customer)
+            browse_warehouse_items(warehouse)
         elif choice == '2':
-            update_profile(customer)
+            make_order(customer, warehouse)
         elif choice == '3':
             view_order_history(customer)
+        elif choice == '4':
+            update_profile(customer)
+        elif choice == '5':
+            view_profile(customer)
         elif choice == '0':
             print("Logging out...")
             break
-        else:
-            print("Invalid choice. Please try again.")
+        
+def browse_warehouse_items(warehouse):
+    print("\n--- Browse Warehouse Items ---")
+    items = warehouse.get_available_stock()
+    if not items:
+        print("No items available in the warehouse.")
+        return
+
+    for item in items:
+        print(f"Item ID: {item.item_id}, Name: {item.name}, Price: {item.price}, Quanitity: {item.stock}")
 
 def view_profile(customer):
     print(f"\n--- Profile of {customer.name} ---")
