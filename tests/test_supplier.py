@@ -41,5 +41,8 @@ class TestSupplierManager(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.manager.delete_supplier("SUP999")
 
+    def test_supplier_get_role(self):
+        self.assertEqual(self.supplier.get_role(), "Supplier")
+
 if __name__ == '__main__':
     unittest.main()
