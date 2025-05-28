@@ -1,6 +1,8 @@
 from typing import List
 from app.inventory import Inventory
+from app.customer import Customer
 from app.order import Order
+from app.item import Item
 
 class Warehouse:
     def __init__(self):
@@ -22,6 +24,9 @@ class Warehouse:
     def get_all_orders(self) -> List[Order]:
         return list(self.orders)
 
+    def get_my_orders(self) -> List[Order]:
+        return [order for order in self.orders if order.buyer == self]
+
     def _record_transaction(self, item, quantity, buyer, seller):
         order = Order(item=item, quantity=quantity, buyer=buyer, seller=seller)
         self.orders.append(order)
@@ -39,3 +44,7 @@ class Warehouse:
         self.inventory.add_stock(item, quantity)
         return self._record_transaction(item, quantity, buyer=self, seller=supplier)
 
+    def order_from_supplier(self, supplier, item, quantity):
+        item_for_inventory = Item(item.name, item.description, item.price)
+        self.inventory.add_stock(item_for_inventory, quantity)
+        return self._record_transaction(item_for_inventory, quantity, buyer=self, seller=supplier)

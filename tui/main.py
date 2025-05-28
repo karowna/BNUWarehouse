@@ -15,7 +15,7 @@ def main_menu(supplier_manager, customer_manager, warehouse):
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            admin_login(supplier_manager, warehouse)
+            admin_login(warehouse, supplier_manager)
         elif choice == '2':
             customer_login(customer_manager, warehouse)
         elif choice == '3':

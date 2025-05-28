@@ -14,17 +14,6 @@ class Inventory:
         else:
             self.stock[item] = (quantity, threshold if threshold is not None else 5)
 
-    def remove_stock(self, item: Item, quantity: int) -> None:
-        if item in self.stock and self.stock[item][0] >= quantity:
-            current_qty, threshold = self.stock[item]
-            new_qty = current_qty - quantity
-            if new_qty == 0:
-                del self.stock[item]
-            else:
-                self.stock[item] = (new_qty, threshold)
-        else:
-            raise ValueError("Insufficient stock")
-
     def check_stock(self, item: Item) -> int:
         return self.stock.get(item, (0, 0))[0]
 

@@ -7,7 +7,7 @@ def admin_login(warehouse, supplier_manager):
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            manage_stock(warehouse)
+            manage_stock(warehouse, supplier_manager)
         elif choice == '2':
             manage_finances()
         elif choice == '0':
@@ -15,28 +15,33 @@ def admin_login(warehouse, supplier_manager):
         else:
             print("Invalid choice. Please try again.")
 
-def manage_stock(warehouse):
+def manage_stock(warehouse, supplier_manager):
     while True:
         print("\n--- Manage Warehouse Stock ---")
         print("1. Order from Supplier")
         print("2. View Inventory")
         print("3. Edit Inventory Prices")
         print("4. Edit Inventory Stock Thresholds")
+        print("5. View Supplier Orders")
         print("0. Back to Admin Menu")
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            order_from_supplier(warehouse)
+            order_from_supplier(warehouse, supplier_manager)
         elif choice == '2':
             view_inventory(warehouse)
         elif choice == '3':
             edit_inventory_prices(warehouse)
+        elif choice == '4':
+            edit_inventory_thresholds(warehouse)
+        elif choice == '5':
+
         elif choice == '0':
             break
         else:
             print("Invalid choice. Please try again.")
 
-def order_from_supplier(supplier_manager):
+def order_from_supplier(warehouse, supplier_manager):
     suppliers = supplier_manager.get_all_suppliers()
     if not suppliers:
         print("No suppliers available.")
@@ -46,7 +51,7 @@ def order_from_supplier(supplier_manager):
     for supplier in suppliers:
         print(f"ID: {supplier.supplier_id} | Name: {supplier.name}")
 
-    supplier_id = input("Enter the ID of the supplier you want to view: ")
+    supplier_id = input("Enter the ID of the supplier you want to order from: ")
     supplier = supplier_manager.get_supplier_by_id(supplier_id)
 
     if not supplier:
@@ -60,7 +65,25 @@ def order_from_supplier(supplier_manager):
 
     print(f"\n--- Items Supplied by {supplier.name} ---")
     for idx, item in enumerate(items, start=1):
-        print(f"{idx}. ID: {id(item)} | Name: {item.name} | Price: £{item.price:.2f}")
+        print(f"{idx}. Name: {item.name} | Price: £{item.price:.2f}")
+
+    try:
+        item_choice = int(input("Enter the number of the item you want to order: ")) - 1
+        if item_choice < 0 or item_choice >= len(items):
+            print("Invalid item selection.")
+            return None
+
+        quantity = int(input("Enter the quantity to order: "))
+        if quantity <= 0:
+            print("Quantity must be positive.")
+            return None
+
+        item = items[item_choice]
+        warehouse.order_from_supplier(supplier, item, quantity)
+        print(f"Ordered {quantity} of {item.name} from {supplier.name}.")
+
+    except ValueError:
+        print("Invalid input. Please enter numeric values.")
 
     return supplier
 
@@ -71,8 +94,8 @@ def view_inventory(warehouse):
     if not inventory:
         print("No items in inventory.")
     else:
-        for item, details in inventory.items():
-            print(f"Item: {item}, Quantity: {details['quantity']}, Price: {details['price']}")
+        for item, (quantity, threshold) in warehouse.inventory.get_all_stock().items():
+            print(f"{item} | Quantity: {quantity} | Threshold: {threshold}")
 
 def edit_inventory_prices(warehouse):
     print("\n--- Edit Inventory Prices ---")
@@ -112,5 +135,5 @@ def edit_inventory_thresholds(warehouse):
 
 def manage_finances():
     print("\n--- Manage Finances ---")
-    # Placeholder for finance management logic
+    print
     print("Finance management functionality is not yet implemented.")
