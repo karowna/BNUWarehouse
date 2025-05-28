@@ -1,4 +1,4 @@
-from person import Person
+from app.person import Person
 
 class Customer(Person):
 
