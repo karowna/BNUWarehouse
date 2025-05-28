@@ -60,7 +60,7 @@ def order_from_supplier(supplier_manager):
 
     print(f"\n--- Items Supplied by {supplier.name} ---")
     for idx, item in enumerate(items, start=1):
-        print(f"{idx}. ID: {id(item)} | Name: {item.name} | Price: ${item.price:.2f}")
+        print(f"{idx}. ID: {id(item)} | Name: {item.name} | Price: £{item.price:.2f}")
 
     return supplier
 
