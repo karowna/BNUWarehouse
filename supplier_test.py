@@ -1,6 +1,6 @@
 import unittest
 from person import Person
-from supplier import Supplier, SupplierManager  # Replace 'your_module' with the actual module name
+from supplier import Supplier, SupplierManager 
 
 class TestSupplierManager(unittest.TestCase):
 

@@ -55,12 +55,14 @@ def sign_in():
         print("Customer not found. Please sign up first.")
 
 def admin_login():
-    print("\n--- Admin Menu ---")
-    print("1. Manage Suppliers")
-    print("2. Manage Stock")
-    print("3. Manage Finances")
-    print("0. Back to Main Menu")
-    choice = input("Enter your choice: ")
+    while True:
+
+        print("\n--- Admin Menu ---")
+        print("1. Manage Suppliers")
+        print("2. Manage Stock")
+        print("3. Manage Finances")
+        print("0. Back to Main Menu")
+        choice = input("Enter your choice: ")
 
         if choice == '1':
             manage_suppliers()
