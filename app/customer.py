@@ -4,7 +4,7 @@ class Customer(Person):
 
     def __init__(self, name, email, person_id):
         super().__init__(person_id, name, email) # Using the Person constructor via Super
-        self.orders: List[Order] = []
+        self.order_history: List[Order] = []
 
     def get_role(self):
         return "Customer"

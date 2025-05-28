@@ -102,14 +102,17 @@ def make_order(customer, warehouse):
         warehouse.process_order(order)
 
         # Add to customer's history
-        if not hasattr(customer, "orders"):
-            customer.orders = []
-        customer.orders.append(order)
+        if not hasattr(customer, "order_history"):
+            customer.order_history = []
+        customer.order_history.append(order)
+
 
         print(f"Order placed: {quantity} x {item.name} (£{order.total_price:.2f})")
 
     except ValueError:
         print("Invalid input. Please enter numbers.")
+
+
 
 def view_profile(customer):
     print(f"\n--- Profile of {customer.name} ---")
@@ -128,11 +131,22 @@ def update_profile(customer):
     
     print("Profile updated successfully!")
 
+
 def view_order_history(customer):
     print("\n--- Order History ---")
-    if customer.order_history:
-        for order in customer.order_history:
-            print(f"Order ID: {order['order_id']}, Items: {order['items']}, Total: {order['total']}")
-    else:
+    
+    if not customer.order_history:
         print("No orders found.")
+        return
 
+    # Print header
+    headers = ["Order ID", "Item", "Quantity", "Price", "Total", "Seller", "Timestamp"]
+    print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<8} {headers[3]:<8} {headers[4]:<8} {headers[5]:<15} {headers[6]}")
+    print("-" * 90)
+
+    # Print each order
+    for order in customer.order_history:
+        print(f"{order.order_id:<10} {order.item.name:<15} {order.quantity:<8} "
+              f"£{order.item.price:<7.2f} £{order.total_price:<7.2f} "
+              f"{getattr(order.seller, 'name', 'Warehouse'):<15} "
+              f"{order.timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
