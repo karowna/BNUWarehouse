@@ -7,7 +7,7 @@ class Item:
 
     
     def __str__(self):
-        return f"{self.name} - {self.description} (${self.price:.2f})"
+        return f"{self.name} - {self.description} (£{self.price:.2f})"
 
     def __repr__(self):
         return f"Item({self.name})"

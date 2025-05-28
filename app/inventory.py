@@ -23,6 +23,13 @@ class Inventory:
             self.stock[item] = (quantity, threshold)
         else:
             raise ValueError("Item not found in inventory")
+    
+    def update_price(self, item_name: str, new_price: float) -> None:
+        for item in self.stock.keys():
+            if item.name == item_name:
+                item.price = new_price
+                return
+        raise ValueError(f"Item '{item_name}' not found in inventory.")
 
     def low_stock_alerts(self) -> List[Item]:
         return [item for item, (qty, threshold) in self.stock.items() if qty < threshold]

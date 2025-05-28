@@ -39,18 +39,6 @@ class Warehouse:
     def summarise_orders(self) -> list[dict]:
         return [self._summarise_order(order) for order in self.orders]
 
-    def summarise_my_orders(self) -> list[dict]:
-        return [self._summarise_order(order) for order in self.get_my_orders()]
-
-    def summarise_customer_orders(self) -> list[dict]:
-        return [self._summarise_order(order) for order in self.get_customer_orders()]
-
-    def get_my_orders(self) -> List[Order]:
-        return [order for order in self.orders if order.buyer == self]
-
-    def get_customer_orders(self) -> List[Order]:
-        return [order for order in self.orders if isinstance(order.buyer, Customer)]
-
     def _record_transaction(self, item, quantity, buyer, seller):
         order = Order(item=item, quantity=quantity, buyer=buyer, seller=seller)
         self.orders.append(order)
@@ -68,7 +56,3 @@ class Warehouse:
         self.inventory.add_stock(item, quantity)
         return self._record_transaction(item, quantity, buyer=self, seller=supplier)
 
-    def order_from_supplier(self, supplier, item, quantity):
-        item_for_inventory = Item(item.name, item.description, item.price)
-        self.inventory.add_stock(item_for_inventory, quantity)
-        return self._record_transaction(item_for_inventory, quantity, buyer=self, seller=supplier)

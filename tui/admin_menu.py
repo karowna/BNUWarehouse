@@ -144,8 +144,6 @@ def manage_finances(warehouse):
     while True:
         print("\n--- Manage Finances ---")
         print("1. View All Orders")
-        print("2. View My Orders")
-        print("3. View Customer Orders")
         print("2. Quick Financial Overview")
         print("3. Deep Dive into Financials")
         print("4. Export Financial Report")
@@ -154,14 +152,10 @@ def manage_finances(warehouse):
         if choice == '1':
             view_all_orders(warehouse)
         elif choice == '2':
-            view_my_orders(warehouse)
-        elif choice == '3':
-            view_customer_orders(warehouse)
-        elif choice == '4':
             quick_financial_overview(warehouse)
-        elif choice == '5':
+        elif choice == '3':
             deep_dive_financials(warehouse)
-        elif choice == '6':
+        elif choice == '4':
             export_financial_report(warehouse)
         elif choice == '0':
             break
