@@ -133,7 +133,25 @@ def edit_inventory_thresholds(warehouse):
         print("Invalid input.")
 
 
-def manage_finances():
-    print("\n--- Manage Finances ---")
-    print
-    print("Finance management functionality is not yet implemented.")
+    def manage_finances(warehouse):
+        while True
+            print("\n--- Manage Finances ---")
+            print("1. View All Orders")
+            print("2. Quick Financial Overview")
+            print("3. Deep Dive into Financials")
+            print("4. Export Financial Report")
+            print("0. Back to Admin Menu")
+            choice = input("Enter your choice: ")
+            if choice == '1':
+                view_all_orders(warehouse)
+            elif choice == '2':
+                quick_financial_overview(warehouse)
+            elif choice == '3':
+                deep_dive_financials(warehouse)
+            elif choice == '4':
+                export_financial_report(warehouse)
+            elif choice == '0':
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
