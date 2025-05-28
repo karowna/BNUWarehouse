@@ -64,7 +64,6 @@ class SupplierManager:
         supplier.items_supplied.append(item)
         return item
 
-
     def remove_item_from_supplier(self, supplier_id, item):
         supplier = self.get_supplier_by_id(supplier_id)
         if not supplier:
@@ -74,9 +73,3 @@ class SupplierManager:
         else:
             raise ValueError(f"Item {item} not found in supplier's items.")
         return supplier
-
-
-
-
-
-
