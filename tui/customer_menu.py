@@ -64,11 +64,52 @@ def browse_warehouse_items(warehouse):
     filtered_items = warehouse.get_items_above_threshold()
 
     if not filtered_items:
-        print("No items available above threshold.")
+        print("No items available at the moment.")
         return
 
     for item, (quantity, _) in filtered_items.items():
         print(f"Name: {item.name}, Price: £{item.price:.2f}, Quantity: {quantity}")
+
+def make_order(customer, warehouse):
+    print("\n--- Make an Order ---")
+    stock = warehouse.get_items_above_threshold()
+
+    if not stock:
+        print("No items available to order.")
+        return
+
+    # Display available items
+    items = list(stock.keys())
+    for idx, item in enumerate(items, start=1):
+        qty = stock[item][0]
+        print(f"{idx}. {item.name} - £{item.price:.2f} (Available: {qty})")
+
+    try:
+        choice = int(input("Select item number to order: ")) - 1
+        if not (0 <= choice < len(items)):
+            print("Invalid selection.")
+            return
+
+        item = items[choice]
+        quantity = int(input(f"Enter quantity to order (max {stock[item][0]}): "))
+        if quantity <= 0 or quantity > stock[item][0]:
+            print("Invalid quantity.")
+            return
+
+        # Create and process the order
+        from app.order import Order  # only if needed
+        order = Order(item=item, quantity=quantity, buyer=customer, seller=warehouse)
+        warehouse.process_order(order)
+
+        # Add to customer's history
+        if not hasattr(customer, "orders"):
+            customer.orders = []
+        customer.orders.append(order)
+
+        print(f"Order placed: {quantity} x {item.name} (£{order.total_price:.2f})")
+
+    except ValueError:
+        print("Invalid input. Please enter numbers.")
 
 def view_profile(customer):
     print(f"\n--- Profile of {customer.name} ---")

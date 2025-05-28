@@ -14,6 +14,16 @@ class Inventory:
         else:
             self.stock[item] = (quantity, threshold if threshold is not None else 0) # Default threshold is 0 if not specified
 
+    def remove_stock(self, item: Item, quantity: int) -> None:
+        if item not in self.stock:
+            raise ValueError("Item not found in inventory.")
+
+        current_quantity, threshold = self.stock[item]
+        if quantity > current_quantity:
+            raise ValueError("Not enough stock available.")
+
+        self.stock[item] = (current_quantity - quantity, threshold)
+
     def check_stock(self, item: Item) -> int:
         return self.stock.get(item, (0, 0))[0]
 
