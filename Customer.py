@@ -6,6 +6,9 @@ class Customer(Person):
         super().__init__(person_id, name, email) # Using the Person constructor via Super
         self.order_history = [] 
 
+    def get_role(self):
+        return "Customer"
+
     @property # Property to alias the person_id as customer_id to make things more readable
     def customer_id(self):
         return self.person_id

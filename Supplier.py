@@ -6,6 +6,9 @@ class Supplier(Person):
         super().__init__(person_id, name, email) # Using the Person constructor via Super
         self.items_supplied = []
 
+    def get_role(self):
+        return "Supplier"
+
     @property # Property to alias the person_id as supplier_id to make things more readable
     def supplier_id(self):
         return self.person_id

@@ -1,4 +1,4 @@
-from abc import ABC # Abstract Base Class for Person, we will never create a Person directly
+from abc import ABC, abstractmethod # Abstract Base Class for Person, we will never create a Person directly
 
 class Person(ABC):
     def __init__(self, person_id, name, email): # Constructor
@@ -6,4 +6,8 @@ class Person(ABC):
         self.name = name # Attributes
         self.email = email
         self.person_id = person_id
-    
+
+    @abstractmethod
+    def get_role(self):
+        """Return the role of the person (e.g., Customer, Supplier)."""
+        pass
