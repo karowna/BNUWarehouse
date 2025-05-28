@@ -6,6 +6,9 @@ class Customer(Person):
         super().__init__(person_id, name, email) # Using the Person constructor via Super
         self.order_history = [] 
 
+    def get_role(self):
+        return "Customer"
+
     @property # Property to alias the person_id as customer_id to make things more readable
     def customer_id(self):
         return self.person_id
@@ -23,6 +26,9 @@ class CustomerManager: # Manages customer objects, customer should not manage it
         customer = Customer(name, email, person_id)
         self.customers[customer.customer_id] = customer
         return customer
+
+    def get_customer_by_id(self, customer_id):
+        return self.customers.get(customer_id)
 
     def update_customer(self, customer_id, **kwargs):
         customer = self.get_customer_by_id(customer_id)

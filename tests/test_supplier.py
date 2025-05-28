@@ -3,7 +3,7 @@ from person import Person
 from supplier import Supplier, SupplierManager
 
 class TestSupplierManager(unittest.TestCase):
-
+    """Unit tests for the SupplierManager and Supplier classes."""
     def setUp(self):
         self.manager = SupplierManager()
         self.supplier = self.manager.create_supplier("Alice", "alice@example.com", "SUP001")
