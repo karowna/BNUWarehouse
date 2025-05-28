@@ -12,7 +12,7 @@ class Inventory:
             new_threshold = threshold if threshold is not None else current_threshold
             self.stock[item] = (current_qty + quantity, new_threshold)
         else:
-            self.stock[item] = (quantity, threshold if threshold is not None else 5)
+            self.stock[item] = (quantity, threshold if threshold is not None else 0) # Default threshold is 0 if not specified
 
     def check_stock(self, item: Item) -> int:
         return self.stock.get(item, (0, 0))[0]
@@ -32,4 +32,3 @@ class Inventory:
 
     def get_full_stock_info(self) -> Dict[Item, Tuple[int, int]]:
         return dict(self.stock)
-

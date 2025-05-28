@@ -4,8 +4,10 @@ from app.customer import Customer
 from app.order import Order
 from app.item import Item
 
+
 class Warehouse:
-    def __init__(self):
+    def __init__(self, name: str):
+        self.name = name
         self.suppliers: List['Supplier'] = []
         self.inventory = Inventory()
         
@@ -21,11 +23,33 @@ class Warehouse:
         self.inventory.remove_stock(order.item, order.quantity)
         self.orders.append(order)
 
-    def get_all_orders(self) -> List[Order]:
-        return list(self.orders)
+    def _summarise_order(self, order) -> dict:
+        return {
+            "order_id": order.order_id,
+            "item_name": order.item.name,
+            "item_description": order.item.description,
+            "item_price": order.item.price,
+            "quantity": order.quantity,
+            "total_price": order.total_price,
+            "buyer_name": getattr(order.buyer, 'name', 'N/A'),
+            "seller_name": getattr(order.seller, 'name', 'N/A'),
+            "timestamp": order.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+
+    def summarise_orders(self) -> list[dict]:
+        return [self._summarise_order(order) for order in self.orders]
+
+    def summarise_my_orders(self) -> list[dict]:
+        return [self._summarise_order(order) for order in self.get_my_orders()]
+
+    def summarise_customer_orders(self) -> list[dict]:
+        return [self._summarise_order(order) for order in self.get_customer_orders()]
 
     def get_my_orders(self) -> List[Order]:
         return [order for order in self.orders if order.buyer == self]
+
+    def get_customer_orders(self) -> List[Order]:
+        return [order for order in self.orders if isinstance(order.buyer, Customer)]
 
     def _record_transaction(self, item, quantity, buyer, seller):
         order = Order(item=item, quantity=quantity, buyer=buyer, seller=seller)

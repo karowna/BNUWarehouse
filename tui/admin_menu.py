@@ -1,5 +1,15 @@
 def admin_login(warehouse, supplier_manager):
     while True:
+        print("\n--- Admin Alerts ---")
+        low_stock_items = warehouse.inventory.low_stock_alerts()
+        if low_stock_items:
+            print("Low Stock Alerts:")
+            for item in low_stock_items:
+                quantity, threshold = warehouse.inventory.stock[item]
+                print(f"- {item.name} (Qty: {quantity}, Threshold: {threshold})")
+        else:
+            print("Nothing to report.")
+
         print("\n--- Admin Menu ---")
         print("1. Manage Stock")
         print("2. Manage Finances")
@@ -9,11 +19,12 @@ def admin_login(warehouse, supplier_manager):
         if choice == '1':
             manage_stock(warehouse, supplier_manager)
         elif choice == '2':
-            manage_finances()
+            manage_finances(warehouse)
         elif choice == '0':
             break
         else:
             print("Invalid choice. Please try again.")
+
 
 def manage_stock(warehouse, supplier_manager):
     while True:
@@ -22,7 +33,6 @@ def manage_stock(warehouse, supplier_manager):
         print("2. View Inventory")
         print("3. Edit Inventory Prices")
         print("4. Edit Inventory Stock Thresholds")
-        print("5. View Supplier Orders")
         print("0. Back to Admin Menu")
         choice = input("Enter your choice: ")
 
@@ -34,8 +44,6 @@ def manage_stock(warehouse, supplier_manager):
             edit_inventory_prices(warehouse)
         elif choice == '4':
             edit_inventory_thresholds(warehouse)
-        elif choice == '5':
-            view_supplier_orders(warehouse)
         elif choice == '0':
             break
         else:
@@ -94,7 +102,7 @@ def view_inventory(warehouse):
     if not inventory:
         print("No items in inventory.")
     else:
-        for item, (quantity, threshold) in warehouse.inventory.get_all_stock().items():
+        for item, (quantity, threshold) in warehouse.inventory.get_full_stock_info().items():
             print(f"{item} | Quantity: {quantity} | Threshold: {threshold}")
 
 def edit_inventory_prices(warehouse):
@@ -132,26 +140,56 @@ def edit_inventory_thresholds(warehouse):
     except ValueError:
         print("Invalid input.")
 
+def manage_finances(warehouse):
+    while True:
+        print("\n--- Manage Finances ---")
+        print("1. View All Orders")
+        print("2. View My Orders")
+        print("3. View Customer Orders")
+        print("2. Quick Financial Overview")
+        print("3. Deep Dive into Financials")
+        print("4. Export Financial Report")
+        print("0. Back to Admin Menu")
+        choice = input("Enter your choice: ")
+        if choice == '1':
+            view_all_orders(warehouse)
+        elif choice == '2':
+            view_my_orders(warehouse)
+        elif choice == '3':
+            view_customer_orders(warehouse)
+        elif choice == '4':
+            quick_financial_overview(warehouse)
+        elif choice == '5':
+            deep_dive_financials(warehouse)
+        elif choice == '6':
+            export_financial_report(warehouse)
+        elif choice == '0':
+            break
+        else:
+            print("Invalid choice. Please try again.")
 
-    def manage_finances(warehouse):
-        while True
-            print("\n--- Manage Finances ---")
-            print("1. View All Orders")
-            print("2. Quick Financial Overview")
-            print("3. Deep Dive into Financials")
-            print("4. Export Financial Report")
-            print("0. Back to Admin Menu")
-            choice = input("Enter your choice: ")
-            if choice == '1':
-                view_all_orders(warehouse)
-            elif choice == '2':
-                quick_financial_overview(warehouse)
-            elif choice == '3':
-                deep_dive_financials(warehouse)
-            elif choice == '4':
-                export_financial_report(warehouse)
-            elif choice == '0':
-                break
-            else:
-                print("Invalid choice. Please try again.")
+
+def view_all_orders(warehouse):
+    print("\n--- View All Orders ---")
+    summaries = warehouse.summarise_orders()
+    if not summaries:
+        print("No orders found.")
+        return
+
+    headers = ["Order ID", "Item", "Qty", "Price", "Total", "Buyer", "Seller", "Timestamp"]
+    print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<5} {headers[3]:<7} {headers[4]:<8} {headers[5]:<15} {headers[6]:<15} {headers[7]}")
+    print("-" * 95)
+
+    for s in summaries:
+        print(f"{s['order_id']:<10} {s['item_name']:<15} {s['quantity']:<5} £{s['item_price']:<6.2f} £{s['total_price']:<7.2f} {s['buyer_name']:<15} {s['seller_name']:<15} {s['timestamp']}")
+
+
+def quick_financial_overview(warehouse):
+    pass
+
+def deep_dive_financials(warehouse):
+    pass
+
+def export_financial_report(warehouse):
+    pass
 

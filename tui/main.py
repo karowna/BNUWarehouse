@@ -29,7 +29,7 @@ def main_menu(supplier_manager, customer_manager, warehouse):
 if __name__ == "__main__":
     supplier_manager = SupplierManager()
     customer_manager = CustomerManager()
-    warehouse = Warehouse()
+    warehouse = Warehouse(name="Main Warehouse")
 
     customer_manager.create_customer("Bkar", "mock@mockemail.com", "1")
     customer_manager.create_customer("Aisha", "anothermock@mockemail.com", "2")
