@@ -77,7 +77,6 @@ def admin_login():
 
 def manage_suppliers():
     print("\n--- Manage Suppliers ---")
-    # Placeholder for supplier management logic
     print("Supplier management functionality is not yet implemented.")
 
 def manage_stock():
