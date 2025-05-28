@@ -61,13 +61,14 @@ def customer_menu(customer, warehouse):
         
 def browse_warehouse_items(warehouse):
     print("\n--- Browse Warehouse Items ---")
-    items = warehouse.get_available_stock()
-    if not items:
-        print("No items available in the warehouse.")
+    filtered_items = warehouse.get_items_above_threshold()
+
+    if not filtered_items:
+        print("No items available above threshold.")
         return
 
-    for item in items:
-        print(f"Item ID: {item.item_id}, Name: {item.name}, Price: {item.price}, Quanitity: {item.stock}")
+    for item, (quantity, _) in filtered_items.items():
+        print(f"Name: {item.name}, Price: £{item.price:.2f}, Quantity: {quantity}")
 
 def view_profile(customer):
     print(f"\n--- Profile of {customer.name} ---")

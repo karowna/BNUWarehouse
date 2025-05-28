@@ -16,8 +16,9 @@ class Warehouse:
     def view_inventory(self) -> dict:
         return self.inventory.get_all_stock()
 
-    def get_available_stock(self) -> dict:
-        return self.inventory.get_all_stock()
+    def get_items_above_threshold(self):
+        stock_info = self.inventory.get_full_stock_info()
+        return {item: qty_thresh for item, qty_thresh in stock_info.items() if qty_thresh[0] > qty_thresh[1]}
 
     def process_order(self, order: Order) -> None:
         self.inventory.remove_stock(order.item, order.quantity)
