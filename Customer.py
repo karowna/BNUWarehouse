@@ -24,9 +24,6 @@ class CustomerManager: # Manages customer objects, customer should not manage it
         self.customers[customer.customer_id] = customer
         return customer
 
-    def get_customer_by_id(self, customer_id):
-        return self.customers.get(customer_id)
-
     def update_customer(self, customer_id, **kwargs):
         customer = self.get_customer_by_id(customer_id)
         if not customer:

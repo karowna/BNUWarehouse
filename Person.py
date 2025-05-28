@@ -6,4 +6,3 @@ class Person(ABC):
         self.name = name # Attributes
         self.email = email
         self.person_id = person_id
-    
