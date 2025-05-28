@@ -35,7 +35,7 @@ def manage_stock(warehouse, supplier_manager):
         elif choice == '4':
             edit_inventory_thresholds(warehouse)
         elif choice == '5':
-
+            view_supplier_orders(warehouse)
         elif choice == '0':
             break
         else:
