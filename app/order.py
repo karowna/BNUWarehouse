@@ -16,7 +16,7 @@ class Order:
             f"Invoice:\n"
             f"Item: {self.item.name}\n"
             f"Quantity: {self.quantity}\n"
-            f"Total Price: ${self.total_price:.2f}\n"
+            f"Total Price: £{self.total_price:.2f}\n"
             f"Buyer: {self.buyer}\n"
             f"Seller: {self.seller}\n"
             f"Date: {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"

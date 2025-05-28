@@ -1,4 +1,5 @@
 from app.person import Person
+from app.item import Item
 
 class Supplier(Person):
 
@@ -50,13 +51,20 @@ class SupplierManager:
             raise ValueError(f"No supplier found with ID {supplier_id}")
         return supplier.items_supplied
     
-    def add_item_to_supplier(self, supplier_id, item):
+    def create_supplier_item(self, supplier_id, name=None, description=None, price=None, item=None):
         supplier = self.get_supplier_by_id(supplier_id)
         if not supplier:
             raise ValueError(f"No supplier found with ID {supplier_id}")
+
+        if item is None:
+            if None in (name, description, price):
+                raise ValueError("To create a new item, name, description, and price must be provided.")
+            item = Item(name, description, price, supplier)
+
         supplier.items_supplied.append(item)
-        return supplier
-    
+        return item
+
+
     def remove_item_from_supplier(self, supplier_id, item):
         supplier = self.get_supplier_by_id(supplier_id)
         if not supplier:

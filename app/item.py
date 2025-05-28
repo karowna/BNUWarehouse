@@ -6,7 +6,7 @@ class Item:
         self.supplier = supplier
 
     def get_details(self) -> str:
-        return f"{self.name}: {self.description} - ${self.price:.2f} (Supplier: {self.supplier})"
+        return f"{self.name}: {self.description} - £{self.price:.2f} (Supplier: {self.supplier})"
 
     def __repr__(self):
         return f"Item({self.name})"

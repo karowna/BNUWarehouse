@@ -2,6 +2,35 @@ from app.supplier import Supplier, SupplierManager
 
 supplier_manager = SupplierManager()
 
+# Create mock suppliers
+supplier_manager.create_supplier("Supplier A", "mocksupplier@mockemail.com", "1")
+supplier_manager.create_supplier("Supplier B", "anothermocksupplier@mockemail.com", "2")
+# Create mock items for suppliers
+supplier_manager.create_supplier_item(
+    supplier_id="1",
+    name="Item A1",
+    description="Description for Item A1",
+    price=10.99
+)
+supplier_manager.create_supplier_item(
+    supplier_id="1",
+    name="Item A2",
+    description="Description for Item A2",
+    price=15.49
+)
+supplier_manager.create_supplier_item(
+    supplier_id="2",
+    name="Item B1",
+    description="Description for Item B1",
+    price=20.00
+)
+supplier_manager.create_supplier_item(
+    supplier_id="2",
+    name="Item B2",
+    description="Description for Item B2",
+    price=25.75
+)
+
 def supplier_login():
     while True:
         print("\n--- Supplier Login ---")
@@ -79,35 +108,25 @@ def update_supplier_profile(supplier):
     print("Profile updated successfully.")
 
 def create_item_for_supplier(supplier):
-    from item import Item
     name = input("Enter item name: ")
     description = input("Enter item description: ")
-    price = float(input("Enter item price: "))
-    item = Item(name, description, price, supplier)
-    supplier_manager.add_item_to_supplier(supplier.supplier_id, item)
-    print(f"Item {name} created successfully.")
+    try:
+        price = float(input("Enter item price: "))
+        item = supplier_manager.create_supplier_item(
+            supplier_id=supplier.supplier_id,
+            name=name,
+            description=description,
+            price=price
+        )
+        print(f"Item '{item.name}' created successfully.")
+    except ValueError as e:
+        print(f"Error: {e}")
 
 def view_supplier_items(supplier):
     items = supplier_manager.get_supplier_items(supplier.supplier_id)
     if items:
         print("\n--- Items Supplied ---")
         for item in items:
-            print(f"{item.name}: {item.description} - ${item.price:.2f}")
-    else:
-        print("No items found.")
-
-def remove_item_from_supplier(supplier):
-    items = supplier_manager.get_supplier_items(supplier.supplier_id)
-    if items:
-        print("\n--- Items Supplied ---")
-        for idx, item in enumerate(items, start=1):
-            print(f"{idx}. {item.name}: {item.description} - ${item.price:.2f}")
-        choice = int(input("Enter the number of the item to remove: "))
-        if 1 <= choice <= len(items):
-            item = items[choice - 1]
-            supplier_manager.remove_item_from_supplier(supplier.supplier_id, item)
-            print(f"Item {item.name} removed successfully.")
-        else:
-            print("Invalid choice.")
+            print(f"{item.name}: {item.description} - £{item.price:.2f}")
     else:
         print("No items found.")

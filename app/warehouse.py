@@ -1,5 +1,5 @@
 from typing import List
-from inventory import Inventory
+from app.inventory import Inventory
 from app.order import Order
 
 class Warehouse:
@@ -21,3 +21,23 @@ class Warehouse:
 
     def get_all_orders(self) -> List[Order]:
         return list(self.orders)
+
+    def _record_transaction(self, item, quantity, buyer, seller):
+        order = Order(item=item, quantity=quantity, buyer=buyer, seller=seller)
+        self.orders.append(order)
+        if isinstance(buyer, Customer):
+            buyer.orders.append(order)
+        return order
+
+    def place_order(self, customer, item, quantity):
+        if self.inventory.check_stock(item) < quantity:
+            raise ValueError("Not enough stock.")
+        self.inventory.remove_stock(item, quantity)
+        return self._record_transaction(item, quantity, buyer=customer, seller=self)
+
+    def order_from_supplier(self, supplier, item, quantity):
+        self.inventory.add_stock(item, quantity)
+        return self._record_transaction(item, quantity, buyer=self, seller=supplier)
+
+
+
