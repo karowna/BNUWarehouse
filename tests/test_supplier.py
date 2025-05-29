@@ -8,6 +8,19 @@ class TestSupplier(unittest.TestCase):
         """Set up the test environment."""
         self.supplier_manager = SupplierManager()
 
+    def test_get_all_suppliers(self):
+        """Test retrieving all suppliers."""
+        self.assertEqual(self.supplier_manager.get_all_suppliers(), [])
+
+        # Create a supplier and check if it appears in the list
+        self.supplier_manager.create_supplier("Steve", "steve@example.com", "1")
+        suppliers = self.supplier_manager.get_all_suppliers()
+        self.assertEqual(len(suppliers), 1)
+        self.assertEqual(suppliers[0].name, "Steve")
+        self.assertEqual(suppliers[0].email, "steve@example.com")
+        self.assertEqual(suppliers[0].supplier_id, "1")
+
+    
     def test_create_supplier(self):
         """Test creating a supplier."""
         supplier = self.supplier_manager.create_supplier("Steve", "steve@example.com", "1")

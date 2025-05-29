@@ -1,4 +1,4 @@
-def admin_login(warehouse, supplier_manager):
+def admin_login(warehouse, supplier_manager, finance_compiler):
     while True:
         print("\n--- Admin Alerts ---")
         low_stock_items = warehouse.inventory.low_stock_alerts()
@@ -19,7 +19,7 @@ def admin_login(warehouse, supplier_manager):
         if choice == '1':
             manage_stock(warehouse, supplier_manager)
         elif choice == '2':
-            manage_finances(warehouse)
+            manage_finances(finance_compiler)
         elif choice == '0':
             break
         else:
@@ -51,50 +51,42 @@ def manage_stock(warehouse, supplier_manager):
             print("Invalid choice. Please try again.")
 
 def order_from_supplier(warehouse, supplier_manager):
+    print("\n--- Order from Supplier ---")
     suppliers = supplier_manager.get_all_suppliers()
+
     if not suppliers:
         print("No suppliers available.")
-        return None
+        return
 
-    print("\n--- Available Suppliers ---")
     for supplier in suppliers:
         print(f"ID: {supplier.supplier_id} | Name: {supplier.name}")
 
-    supplier_id = input("Enter the ID of the supplier you want to order from: ")
+    supplier_id = input("Enter the ID of the supplier to order from: ")
     supplier = supplier_manager.get_supplier_by_id(supplier_id)
 
     if not supplier:
         print("Supplier not found.")
-        return None
+        return
 
-    items = supplier.items_supplied
-    if not items:
-        print(f"{supplier.name} has no items.")
-        return supplier
+    if not supplier.items_supplied:
+        print(f"{supplier.name} has no items available.")
+        return
 
     print(f"\n--- Items Supplied by {supplier.name} ---")
-    for idx, item in enumerate(items, start=1):
-        print(f"{idx}. Name: {item.name} | Price: £{item.price:.2f}")
+    for idx, item in enumerate(supplier.items_supplied, start=1):
+        print(f"{idx}. {item.name} - £{item.price:.2f}")
 
     try:
-        item_choice = int(input("Enter the number of the item you want to order: ")) - 1
-        if item_choice < 0 or item_choice >= len(items):
-            print("Invalid item selection.")
-            return None
+        choice = int(input("Select item number to order: ")) - 1
+        quantity = int(input("Enter quantity to order: "))
 
-        quantity = int(input("Enter the quantity to order: "))
-        if quantity <= 0:
-            print("Quantity must be positive.")
-            return None
+        item = supplier.items_supplied[choice]
+        order = warehouse.order_from_supplier(supplier, item, quantity)
 
-        item = items[item_choice]
-        warehouse.order_from_supplier(supplier, item, quantity)
         print(f"Ordered {quantity} of {item.name} from {supplier.name}.")
 
-    except ValueError:
-        print("Invalid input. Please enter numeric values.")
-
-    return supplier
+    except (ValueError, IndexError):
+        print("Invalid input or selection.")
 
 
 def view_inventory(warehouse):
@@ -103,22 +95,35 @@ def view_inventory(warehouse):
     if not inventory:
         print("No items in inventory.")
     else:
-        for item, (quantity, threshold) in warehouse.inventory.get_full_stock_info().items():
+        for item, (quantity, threshold) in warehouse.inventory.get_full_item_info().items():
             print(f"{item} | Quantity: {quantity} | Threshold: {threshold}")
 
 def edit_inventory_prices(warehouse):
+    inventory = warehouse.inventory.get_full_item_info()
+    if not inventory:
+        print("Inventory is empty.")
+        return
+
     print("\n--- Edit Inventory Prices ---")
-    item = input("Enter Item Name: ")
-    new_price = float(input("Enter New Price: "))
-    
+    items = list(inventory.keys())
+    for idx, item in enumerate(items, start=1):
+        print(f"{idx}. {item.name} (Current price: £{item.price:.2f})")
+
     try:
-        warehouse.inventory.update_price(item, new_price)
-        print(f"Price for {item} updated to {new_price}.")
-    except ValueError as e:
-        print(e)
+        choice = int(input("Select item to update price: "))
+        if 1 <= choice <= len(items):
+            item = items[choice - 1]
+            new_price = float(input(f"Enter new price for {item.name}: "))
+            warehouse.inventory.update_price(item.name, new_price)
+            print(f"Price for {item.name} updated to £{new_price:.2f}.")
+        else:
+            print("Invalid selection.")
+    except ValueError:
+        print("Invalid input.")
+
 
 def edit_inventory_thresholds(warehouse):
-    inventory = warehouse.inventory.get_full_stock_info()
+    inventory = warehouse.inventory.get_full_item_info()
     if not inventory:
         print("Inventory is empty.")
         return
@@ -141,7 +146,8 @@ def edit_inventory_thresholds(warehouse):
     except ValueError:
         print("Invalid input.")
 
-def manage_finances(warehouse):
+def manage_finances(finance_compiler):
+    """Manage finances related to orders and transactions."""
     while True:
         print("\n--- Manage Finances ---")
         print("1. View All Orders")
@@ -151,22 +157,22 @@ def manage_finances(warehouse):
         print("0. Back to Admin Menu")
         choice = input("Enter your choice: ")
         if choice == '1':
-            view_all_orders(warehouse)
+            view_all_orders(finance_compiler)
         elif choice == '2':
-            quick_financial_overview(warehouse)
+            quick_financial_overview(finance_compiler)
         elif choice == '3':
-            deep_dive_financials(warehouse)
+            deep_dive_financials(finance_compiler)
         elif choice == '4':
-            export_financial_report(warehouse)
+            export_financial_report(finance_compiler)
         elif choice == '0':
             break
         else:
             print("Invalid choice. Please try again.")
 
 
-def view_all_orders(warehouse):
+def view_all_orders(finance_compiler):
     print("\n--- View All Orders ---")
-    summaries = warehouse.summarise_orders()
+    summaries = finance_compiler.summarise_orders()
     if not summaries:
         print("No orders found.")
         return
@@ -178,13 +184,34 @@ def view_all_orders(warehouse):
     for s in summaries:
         print(f"{s['order_id']:<10} {s['item_name']:<15} {s['quantity']:<5} £{s['item_price']:<6.2f} £{s['total_price']:<7.2f} {s['buyer_name']:<15} {s['seller_name']:<15} {s['timestamp']}")
 
+def quick_financial_overview(finance_compiler):
+    """Display a quick financial overview of revenue, costs, and profit."""
+    print("\n--- Quick Financial Overview ---")
+    total_revenue = finance_compiler.total_customer_revenue()
+    total_costs = finance_compiler.total_supplier_costs()
+    profit = finance_compiler.calculate_profit()
+    
+    print(f"Total Revenue from Customers: £{total_revenue:.2f}")
+    print(f"Total Costs from Suppliers: £{total_costs:.2f}")
+    print(f"Total Profit: £{profit:.2f}")
 
-def quick_financial_overview(warehouse):
-    pass
+def deep_dive_financials(finance_compiler):
+    """Provide a detailed analysis of orders and financials."""
+    print("\n--- Deep Dive into Financials ---")
+    customer_orders = finance_compiler.get_customer_orders()
+    supplier_orders = finance_compiler.get_supplier_orders()
+    
+    # Display orders
+    print("\nCustomer Orders:")
+    for order in customer_orders:
+        print(f"Order ID: {order.order_id}, Item: {order.item.name}, Quantity: {order.quantity}, Total: £{order.total_price:.2f}")
+    
+    print("\nSupplier Orders:")
+    for order in supplier_orders:
+        print(f"Order ID: {order.order_id}, Item: {order.item.name}, Quantity: {order.quantity}, Total: £{order.total_price:.2f}")
 
-def deep_dive_financials(warehouse):
-    pass
-
-def export_financial_report(warehouse):
-    pass
-
+def export_financial_report(finance_compiler):
+    """Export a detailed financial report of all orders to CSV."""
+    file_path = input("Enter the file path to export the financial report (append .csv to the end): ")
+    finance_compiler.export_orders_to_csv(finance_compiler.get_all_orders(), file_path)
+    print(f"Financial report exported to {file_path}")

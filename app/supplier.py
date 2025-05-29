@@ -32,6 +32,10 @@ class SupplierManager:
     def __init__(self):
         self.suppliers = {}
 
+    def get_all_suppliers(self):
+        """Return a list of all suppliers."""
+        return list(self.suppliers.values())
+
     def create_supplier(self, name, email, person_id):
         if person_id in self.suppliers:
             raise ValueError(f"Supplier with ID {person_id} already exists.")

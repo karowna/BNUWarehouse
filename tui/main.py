@@ -4,7 +4,7 @@ from tui.supplier_menu import supplier_login
 from app.supplier import SupplierManager
 from app.customer import CustomerManager
 from app.warehouse import Warehouse
-
+from app.finance import FinanceCompiler
 
 def create_mock_customers(customer_manager):
     """Helper function to create mock customers"""
@@ -27,17 +27,23 @@ def create_mock_suppliers_and_items(supplier_manager):
     supplier_manager.create_supplier_item("2", name="Spruce Wood", description="Dark wood", price=50.0)
 
 
-def create_mock_orders(supplier_manager, warehouse):
-    """Helper function to create some mock orders in the warehouse"""
+def create_mock_orders_to_supplier(supplier_manager, warehouse):
+    """Helper function to create stock and orders within the warehouse"""
     s1 = supplier_manager.get_supplier_by_id("1")
     s2 = supplier_manager.get_supplier_by_id("2")
 
     # Place some orders for different items from suppliers
-    warehouse.order_from_supplier(s2, s2.items_supplied[0], 64)  # Cobblestone
-    warehouse.order_from_supplier(s1, s1.items_supplied[0], 32)  # Dirt
-    warehouse.order_from_supplier(s2, s2.items_supplied[0], 16)  # Cobblestone
-    warehouse.order_from_supplier(s1, s1.items_supplied[0], 8)   # Dirt
-    warehouse.order_from_supplier(s2, s2.items_supplied[0], 4)   # Cobblestone
+    warehouse.order_from_supplier(s2, s2.items_supplied[0], 128)  # Cobblestone
+    warehouse.order_from_supplier(s1, s1.items_supplied[0], 64)  # Dirt
+    warehouse.order_from_supplier(s2, s2.items_supplied[0], 32)  # Cobblestone
+    warehouse.order_from_supplier(s1, s1.items_supplied[0], 16)   # Dirt
+    warehouse.order_from_supplier(s2, s2.items_supplied[0], 8)   # Cobblestone
+
+def create_mock_orders_to_warehouse(customer_manager, warehouse):
+    c1 = customer_manager.get_customer_by_id("1")  # Bkar
+    dirt_item = next(item for item in warehouse.inventory.get_all_items().keys() if item.name == "Dirt")
+    order = warehouse.place_order(c1, dirt_item, 10)
+    c1.order_history.append(order)
 
 
 def main_menu(supplier_manager, customer_manager, warehouse):
@@ -50,7 +56,7 @@ def main_menu(supplier_manager, customer_manager, warehouse):
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            admin_login(warehouse, supplier_manager)
+            admin_login(warehouse, supplier_manager, finance_compiler)
         elif choice == '2':
             customer_login(customer_manager, warehouse)
         elif choice == '3':
@@ -67,11 +73,13 @@ if __name__ == "__main__":
     supplier_manager = SupplierManager()
     customer_manager = CustomerManager()
     warehouse = Warehouse(name="Main Warehouse")
+    finance_compiler = FinanceCompiler(orders=warehouse.orders)
 
     # Create mock data for customers, suppliers, and items
     create_mock_customers(customer_manager)
     create_mock_suppliers_and_items(supplier_manager)
-    create_mock_orders(supplier_manager, warehouse)
+    create_mock_orders_to_supplier(supplier_manager, warehouse)
+    create_mock_orders_to_warehouse(customer_manager, warehouse)
 
 
     # Start the main menu
