@@ -6,6 +6,12 @@ Use for opening the program
 python3 -m tui.main.py
 ```
 
+Use for running unit tests
 ```
 coverage run -m unittest discover && coverage report && coverage html
+```
+
+Use for running unit tests and running the program
+```
+coverage run -m unittest discover && coverage report && coverage html | python3 -m tui.main.py
 ```
