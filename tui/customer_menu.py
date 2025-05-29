@@ -18,12 +18,12 @@ def customer_login(customer_manager, warehouse):
 def sign_up(customer_manager):
     name = input("Enter your name: ")
     email = input("Enter your email: ")
-    customer_id = input("Enter a unique customer ID: ")
     try:
-        customer_manager.create_customer(name, email, customer_id)
-        print(f"Customer {name} created successfully! Your customer ID is {customer_id}.")
+        customer = customer_manager.create_customer(name, email)
+        print(f"Customer {name} created successfully! Your customer ID is {customer.customer_id}. Remember it!")
     except ValueError as e:
         print(e)
+
 
 def sign_in(customer_manager, warehouse):
     customer_id = input("Enter your customer ID: ")
@@ -49,7 +49,7 @@ def customer_menu(customer, warehouse):
         if choice == '1':
             browse_warehouse_items(warehouse)
         elif choice == '2':
-            make_order(customer, warehouse)
+            place_order(customer, warehouse)
         elif choice == '3':
             view_order_history(customer)
         elif choice == '4':
@@ -74,46 +74,32 @@ def browse_warehouse_items(warehouse):
     for item, (quantity, _) in filtered_items.items():
         print(f"Name: {item.name}, Price: £{item.price:.2f}, Quantity: {quantity}")
 
-def make_order(customer, warehouse):
-    print("\n--- Make an Order ---")
-    stock = warehouse.get_items_above_threshold()
+def place_order(customer, warehouse):
+    print("\n--- Place an Order ---")
+    stock_info = warehouse.get_items_above_threshold()
 
-    if not stock:
+    if not stock_info:
         print("No items available to order.")
         return
 
-    # Display available items
-    items = list(stock.keys())
+    items = list(stock_info.keys())
+
     for idx, item in enumerate(items, start=1):
-        qty = stock[item][0]
-        print(f"{idx}. {item.name} - £{item.price:.2f} (Available: {qty})")
+        available_qty = stock_info[item][0]
+        print(f"{idx}. {item.name} - £{item.price:.2f} (Available: {available_qty})")
 
     try:
         choice = int(input("Select item number to order: ")) - 1
-        if not (0 <= choice < len(items)):
-            print("Invalid selection.")
-            return
+        quantity = int(input("Enter quantity to order: "))
 
         item = items[choice]
-        quantity = int(input(f"Enter quantity to order (max {stock[item][0]}): "))
-        if quantity <= 0 or quantity > stock[item][0]:
-            print("Invalid quantity.")
-            return
-
-        # Create and process the order
-        from app.order import Order  # only if needed
-        order = Order(item=item, quantity=quantity, buyer=customer, seller=warehouse)
-        warehouse.process_order(order)
-
-        # Add to customer's history
-        if not hasattr(customer, "order_history"):
-            customer.order_history = []
-        customer.order_history.append(order)
+        order = warehouse.place_order(customer, item, quantity)
 
         print(f"Order placed: {quantity} x {item.name} (£{order.total_price:.2f})")
 
-    except ValueError:
-        print("Invalid input. Please enter numbers.")
+    except (ValueError, IndexError):
+        print("Invalid input or selection.")
+
 
 def view_profile(customer):
     """Display the customer's profile information."""

@@ -18,10 +18,9 @@ def supplier_login(supplier_manager):
 def supplier_sign_up(supplier_manager):
     name = input("Enter your name: ")
     email = input("Enter your email: ")
-    supplier_id = input("Enter a unique supplier ID: ")
     try:
-        supplier_manager.create_supplier(name, email, supplier_id)
-        print(f"Supplier {name} created successfully! Your supplier ID is {supplier_id}.")
+        supplier = supplier_manager.create_supplier(name, email)
+        print(f"Supplier {name} created successfully! Your supplier ID is {supplier.supplier_id} Remember it!.")
     except ValueError as e:
         print(e)
 
@@ -49,7 +48,7 @@ def supplier_menu(supplier_manager, supplier):
         if choice == '1':
             view_supplier_profile(supplier)
         elif choice == '2':
-            update_supplier_profile(supplier_manager, supplier)
+            update_supplier_profile(supplier)
         elif choice == '3':
             create_item_for_supplier(supplier_manager, supplier)
         elif choice == '4':
