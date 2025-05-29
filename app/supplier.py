@@ -2,18 +2,32 @@ from app.person import Person
 from app.item import Item
 
 class Supplier(Person):
-
     def __init__(self, name, email, person_id):
-        super().__init__(person_id, name, email) # Using the Person constructor via Super
+        super().__init__(person_id, name, email)
         self.items_supplied = []
 
-    def get_role(self): # Method to return the role of the person, polymorphic behavior
+    def get_role(self):
         return "Supplier"
 
-    @property # Property to alias the person_id as supplier_id to make things more readable
+    @property
     def supplier_id(self):
         return self.person_id
-    
+
+    def update_profile(self, name=None, email=None):  # Supplier can be responsible for their own internal state, but not for creating more suppliers, hence SupplierManager
+        if name:
+            self.name = name
+        if email:
+            self.email = email
+
+    def add_item(self, item):
+        self.items_supplied.append(item)
+
+    def remove_item(self, item):
+        if item in self.items_supplied:
+            self.items_supplied.remove(item)
+        else:
+            print(f"Item {item.name} not found in the list.")
+
 class SupplierManager:
     def __init__(self):
         self.suppliers = {}
@@ -28,48 +42,33 @@ class SupplierManager:
     def get_supplier_by_id(self, supplier_id):
         return self.suppliers.get(supplier_id)
 
-    def update_supplier(self, supplier_id, **kwargs):
-        supplier = self.get_supplier_by_id(supplier_id)
-        if not supplier:
-            raise ValueError(f"No supplier found with ID {supplier_id}")
-        for key, value in kwargs.items():
-            if hasattr(supplier, key):
-                setattr(supplier, key, value)
-
-    def delete_supplier(self, supplier_id):
-        if supplier_id in self.suppliers:
-            del self.suppliers[supplier_id]
-        else:
-            raise ValueError(f"No supplier found with ID {supplier_id}")
-
-    def get_all_suppliers(self):
-        return list(self.suppliers.values())
-
     def get_supplier_items(self, supplier_id):
         supplier = self.get_supplier_by_id(supplier_id)
-        if not supplier:
-            raise ValueError(f"No supplier found with ID {supplier_id}")
-        return supplier.items_supplied
-    
+        if supplier:
+            return supplier.items_supplied
+        return []
+
     def create_supplier_item(self, supplier_id, name=None, description=None, price=None, item=None):
         supplier = self.get_supplier_by_id(supplier_id)
         if not supplier:
             raise ValueError(f"No supplier found with ID {supplier_id}")
+        
+        # Check if the item already exists
+        for existing_item in supplier.items_supplied:
+            if existing_item.name == name and existing_item.description == description:
+                raise ValueError(f"Item '{name}' with description '{description}' already exists.")
 
         if item is None:
             if None in (name, description, price):
                 raise ValueError("To create a new item, name, description, and price must be provided.")
             item = Item(name, description, price, supplier)
 
-        supplier.items_supplied.append(item)
+        supplier.add_item(item)
         return item
 
     def remove_item_from_supplier(self, supplier_id, item):
         supplier = self.get_supplier_by_id(supplier_id)
-        if not supplier:
-            raise ValueError(f"No supplier found with ID {supplier_id}")
-        if item in supplier.items_supplied:
-            supplier.items_supplied.remove(item)
+        if supplier:
+            supplier.remove_item(item)
         else:
-            raise ValueError(f"Item {item} not found in supplier's items.")
-        return supplier
+            raise ValueError(f"Supplier with ID {supplier_id} not found.")

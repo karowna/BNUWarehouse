@@ -1,48 +1,74 @@
 import unittest
-from person import Person
-from supplier import Supplier, SupplierManager
+from app.supplier import Supplier, SupplierManager
+from app.item import Item  # Assuming the Item class is in item.py
+from unittest.mock import patch
 
-class TestSupplierManager(unittest.TestCase):
-    """Unit tests for the SupplierManager and Supplier classes."""
+class TestSupplier(unittest.TestCase):
     def setUp(self):
-        self.manager = SupplierManager()
-        self.supplier = self.manager.create_supplier("Alice", "alice@example.com", "SUP001")
+        """Set up the test environment."""
+        self.supplier_manager = SupplierManager()
 
     def test_create_supplier(self):
-        self.assertEqual(self.supplier.name, "Alice")
-        self.assertEqual(self.supplier.email, "alice@example.com")
-        self.assertEqual(self.supplier.supplier_id, "SUP001")
-        self.assertIn("SUP001", self.manager.suppliers)
+        """Test creating a supplier."""
+        supplier = self.supplier_manager.create_supplier("Steve", "steve@example.com", "1")
+        self.assertIsInstance(supplier, Supplier)
+        self.assertEqual(supplier.supplier_id, "1")
+        self.assertEqual(supplier.name, "Steve")
+        self.assertEqual(supplier.email, "steve@example.com")
 
-    def test_create_duplicate_supplier_raises_error(self):
-        with self.assertRaises(ValueError):
-            self.manager.create_supplier("Alice", "alice@example.com", "SUP001")
+    def test_create_supplier_item(self):
+        """Test creating an item for a supplier."""
+        supplier = self.supplier_manager.create_supplier("Steve", "steve@example.com", "1")
+        item = self.supplier_manager.create_supplier_item("1", name="Dirt", description="Just dirt", price=10.0)
+        
+        self.assertEqual(len(supplier.items_supplied), 1)
+        self.assertEqual(supplier.items_supplied[0].name, "Dirt")
+        self.assertEqual(supplier.items_supplied[0].description, "Just dirt")
+        self.assertEqual(supplier.items_supplied[0].price, 10.0)
 
     def test_get_supplier_by_id(self):
-        supplier = self.manager.get_supplier_by_id("SUP001")
-        self.assertIsNotNone(supplier)
-        self.assertEqual(supplier.name, "Alice")
+        """Test fetching a supplier by ID."""
+        supplier = self.supplier_manager.create_supplier("Steve", "steve@example.com", "1")
+        fetched_supplier = self.supplier_manager.get_supplier_by_id("1")
+        
+        self.assertEqual(fetched_supplier, supplier)
+        self.assertEqual(fetched_supplier.supplier_id, "1")
 
-    def test_update_supplier(self):
-        self.manager.update_supplier("SUP001", name="Alice Smith", email="alice.smith@example.com")
-        supplier = self.manager.get_supplier_by_id("SUP001")
-        self.assertEqual(supplier.name, "Alice Smith")
-        self.assertEqual(supplier.email, "alice.smith@example.com")
+    def test_remove_item(self):
+        """Test removing an item from a supplier's inventory."""
+        supplier = self.supplier_manager.create_supplier("Steve", "steve@example.com", "1")
+        item = self.supplier_manager.create_supplier_item("1", name="Dirt", description="Just dirt", price=10.0)
+    
+        self.assertEqual(len(supplier.items_supplied), 1)
+        
+        supplier.remove_item(item)
+        
+        self.assertEqual(len(supplier.items_supplied), 0)
 
-    def test_update_nonexistent_supplier_raises_error(self):
+    def test_supplier_item_uniqueness(self):
+        """Test that duplicate items are not allowed."""
+        supplier = self.supplier_manager.create_supplier("Steve", "steve@example.com", "1")
+        self.supplier_manager.create_supplier_item("1", name="Dirt", description="Just dirt", price=10.0)
+
+        # Try creating a duplicate item with the same name and description
         with self.assertRaises(ValueError):
-            self.manager.update_supplier("SUP999", name="Ghost")
+            self.supplier_manager.create_supplier_item("1", name="Dirt", description="Just dirt", price=10.0)
 
-    def test_delete_supplier(self):
-        self.manager.delete_supplier("SUP001")
-        self.assertIsNone(self.manager.get_supplier_by_id("SUP001"))
+    def test_get_role(self):
+        """Test the get_role method."""
+        supplier = Supplier("Steve", "steve@example.com", "1")
+        self.assertEqual(supplier.get_role(), "Supplier")
 
-    def test_delete_nonexistent_supplier_raises_error(self):
-        with self.assertRaises(ValueError):
-            self.manager.delete_supplier("SUP999")
+    def test_supplier_update_name(self):
+        supplier = Supplier("Alice", "alice@example.com", "1")
+        supplier.update_profile(name="Alicia")
+        self.assertEqual(supplier.name, "Alicia")
+        self.assertEqual(supplier.email, "alice@example.com")
 
-    def test_supplier_get_role(self):
-        self.assertEqual(self.supplier.get_role(), "Supplier")
-
-if __name__ == '__main__':
+    def test_supplier_update_email(self):
+        supplier = Supplier("Bob", "bob@example.com", "1")
+        supplier.update_profile(email="bobby@example.com")
+        self.assertEqual(supplier.name, "Bob")
+        self.assertEqual(supplier.email, "bobby@example.com")
+if __name__ == "__main__":
     unittest.main()

@@ -29,6 +29,7 @@ def admin_login(warehouse, supplier_manager):
 def manage_stock(warehouse, supplier_manager):
     while True:
         print("\n--- Manage Warehouse Stock ---")
+        print("You're logged in as Admin at ", warehouse.name)
         print("1. Order from Supplier")
         print("2. View Inventory")
         print("3. Edit Inventory Prices")

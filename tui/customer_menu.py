@@ -35,6 +35,7 @@ def sign_in(customer_manager, warehouse):
         print("Customer not found. Please sign up first.")
 
 def customer_menu(customer, warehouse):
+    """Main menu for the customer to navigate through the available actions."""
     while True:
         print("\n--- Customer Menu ---")
         print("1. Browse Warehouse Items")
@@ -58,8 +59,11 @@ def customer_menu(customer, warehouse):
         elif choice == '0':
             print("Logging out...")
             break
-        
+        else:
+            print("Invalid choice, please try again.")
+
 def browse_warehouse_items(warehouse):
+    """Allow the customer to browse available items in the warehouse."""
     print("\n--- Browse Warehouse Items ---")
     filtered_items = warehouse.get_items_above_threshold()
 
@@ -106,45 +110,38 @@ def make_order(customer, warehouse):
             customer.order_history = []
         customer.order_history.append(order)
 
-
         print(f"Order placed: {quantity} x {item.name} (£{order.total_price:.2f})")
 
     except ValueError:
         print("Invalid input. Please enter numbers.")
 
-
-
 def view_profile(customer):
+    """Display the customer's profile information."""
     print(f"\n--- Profile of {customer.name} ---")
     print(f"Customer ID: {customer.customer_id}")
     print(f"Email: {customer.email}")
 
 def update_profile(customer):
+    """Update the customer's profile information."""
     print("\n--- Update Profile ---")
     name = input("Enter new name (leave blank to keep current): ")
     email = input("Enter new email (leave blank to keep current): ")
     
-    if name:
-        customer.name = name
-    if email:
-        customer.email = email
-    
+    customer.update_profile(name=name if name else None, email=email if email else None)
     print("Profile updated successfully!")
 
-
 def view_order_history(customer):
+    """Display the customer's order history."""
     print("\n--- Order History ---")
     
     if not customer.order_history:
         print("No orders found.")
         return
 
-    # Print header
     headers = ["Order ID", "Item", "Quantity", "Price", "Total", "Seller", "Timestamp"]
     print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<8} {headers[3]:<8} {headers[4]:<8} {headers[5]:<15} {headers[6]}")
     print("-" * 90)
 
-    # Print each order
     for order in customer.order_history:
         print(f"{order.order_id:<10} {order.item.name:<15} {order.quantity:<8} "
               f"£{order.item.price:<7.2f} £{order.total_price:<7.2f} "
