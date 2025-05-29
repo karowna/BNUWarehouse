@@ -23,8 +23,6 @@ class Warehouse:
         self.orders.append(order)
 
         if isinstance(buyer, Customer):
-            if not hasattr(buyer, "order_history"):
-                buyer.order_history = []
             buyer.order_history.append(order)
 
         return order
