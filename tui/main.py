@@ -10,8 +10,6 @@ def create_mock_customers(customer_manager):
     """Helper function to create mock customers."""
     customer_manager.create_customer("Bkar", "mock@mockemail.com")
     customer_manager.create_customer("Aisha", "anothermock@mockemail.com")
-    print("Mock customers created successfully.")
-    print("Mock Customer IDs: cu_1, cu_2")
     
     
 def create_mock_suppliers_and_items(supplier_manager):
