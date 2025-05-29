@@ -36,5 +36,23 @@ class TestItem(unittest.TestCase):
         expected = "Dirt: Just dirt - £10.00 (Supplier: Steve)"
         self.assertEqual(item.get_details(), expected)
 
+    def test_clone(self):
+        original = Item("Dirt", "Just dirt", 10.0)
+        clone = original.clone()
+
+        # Check that the clone is equal in content
+        self.assertEqual(clone.name, original.name)
+        self.assertEqual(clone.description, original.description)
+        self.assertEqual(clone.price, original.price)
+        self.assertEqual(clone.supplier, original.supplier)
+
+        # Check that the clone is a different object
+        self.assertIsNot(clone, original)
+
+        # Changing the clone's price should not affect the original
+        clone.price = 20.0
+        self.assertNotEqual(clone.price, original.price)
+
 if __name__ == "__main__":
     unittest.main()
+    
