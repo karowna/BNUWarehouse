@@ -8,6 +8,6 @@ class Person(ABC):
         self.person_id = person_id
 
     @abstractmethod
-    def get_role(self):
+    def get_role(self): # Untestable method, must be implemented by subclasses
         """Return the role of the person (e.g., Customer, Supplier)."""
         pass
