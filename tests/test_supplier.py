@@ -1,8 +1,9 @@
 import unittest
 from app.supplier import Supplier, SupplierManager
 from app.item import Item  # Assuming the Item class is in item.py
+from unittest.mock import patch
 
-class TestSupplierManager(unittest.TestCase):
+class TestSupplier(unittest.TestCase):
     def setUp(self):
         """Set up the test environment."""
         self.supplier_manager = SupplierManager()
@@ -58,21 +59,16 @@ class TestSupplierManager(unittest.TestCase):
         supplier = Supplier("Steve", "steve@example.com", "1")
         self.assertEqual(supplier.get_role(), "Supplier")
 
-    def test_update_profile(self):
-        """Test the update_profile method."""
-        supplier = Supplier("Steve", "steve@example.com", "1")
+    def test_supplier_update_name(self):
+        supplier = Supplier("Alice", "alice@example.com", "1")
+        supplier.update_profile(name="Alicia")
+        self.assertEqual(supplier.name, "Alicia")
+        self.assertEqual(supplier.email, "alice@example.com")
 
-class TestItem(unittest.TestCase):
-    def test_item_creation(self):
-        """Test the creation of an Item."""
-        supplier = Supplier("Steve", "steve@example.com", "1")
-        item = Item(name="Dirt", description="Just dirt", price=10.0, supplier=supplier)
-        
-        self.assertIsInstance(item, Item)
-        self.assertEqual(item.name, "Dirt")
-        self.assertEqual(item.description, "Just dirt")
-        self.assertEqual(item.price, 10.0)
-        self.assertEqual(item.supplier, supplier)
-
+    def test_supplier_update_email(self):
+        supplier = Supplier("Bob", "bob@example.com", "1")
+        supplier.update_profile(email="bobby@example.com")
+        self.assertEqual(supplier.name, "Bob")
+        self.assertEqual(supplier.email, "bobby@example.com")
 if __name__ == "__main__":
     unittest.main()

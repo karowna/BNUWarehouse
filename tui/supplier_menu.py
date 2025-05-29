@@ -66,14 +66,15 @@ def view_supplier_profile(supplier):
     print(f"Email: {supplier.email}")
     print(f"Supplier ID: {supplier.supplier_id}")
 
-def update_supplier_profile(supplier_manager, supplier):
+def update_supplier_profile(supplier):
+    """Update the supplier's profile."""
     name = input("Enter new name (leave blank to keep current): ")
     email = input("Enter new email (leave blank to keep current): ")
-    try:
-        supplier_manager.update_supplier(supplier.supplier_id, name=name if name else None, email=email if email else None)
-        print("Profile updated successfully.")
-    except ValueError as e:
-        print(e)
+    
+    supplier.update_profile(name=name if name else None, email=email if email else None)
+    
+    print("Profile updated successfully.")
+
 
 def create_item_for_supplier(supplier_manager, supplier):
     name = input("Enter item name: ")

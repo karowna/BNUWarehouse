@@ -39,13 +39,6 @@ class SupplierManager:
         self.suppliers[supplier.supplier_id] = supplier
         return supplier
 
-    def update_supplier(self, supplier_id, **kwargs): # Acts as an intemediary to update the supplier's profile, encapsulating the logic
-        supplier = self.suppliers.get(supplier_id)
-        if supplier:
-            supplier.update_profile(**kwargs)
-        else:
-            raise ValueError(f"Supplier with ID {supplier_id} not found.")
-
     def get_supplier_by_id(self, supplier_id):
         return self.suppliers.get(supplier_id)
 

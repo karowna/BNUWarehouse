@@ -35,6 +35,7 @@ def sign_in(customer_manager, warehouse):
         print("Customer not found. Please sign up first.")
 
 def customer_menu(customer, warehouse):
+    """Main menu for the customer to navigate through the available actions."""
     while True:
         print("\n--- Customer Menu ---")
         print("1. Browse Warehouse Items")
@@ -58,39 +59,64 @@ def customer_menu(customer, warehouse):
         elif choice == '0':
             print("Logging out...")
             break
-        
+        else:
+            print("Invalid choice, please try again.")
+
 def browse_warehouse_items(warehouse):
+    """Allow the customer to browse available items in the warehouse."""
     print("\n--- Browse Warehouse Items ---")
-    items = warehouse.get_available_stock()
+    items = warehouse.get_available_stock()  # Assuming this returns a list of items
     if not items:
         print("No items available in the warehouse.")
         return
 
     for item in items:
-        print(f"Item ID: {item.item_id}, Name: {item.name}, Price: {item.price}, Quanitity: {item.stock}")
+        print(f"Item ID: {item.item_id}, Name: {item.name}, Price: {item.price}, Quantity: {item.stock}")
+
+def make_order(customer, warehouse):
+    """Allow the customer to make an order."""
+    print("\n--- Make an Order ---")
+    item_id = input("Enter the item ID to order: ")
+    quantity = int(input("Enter the quantity: "))
+    
+    item = warehouse.get_item_by_id(item_id)
+    if not item:
+        print("Item not found in the warehouse.")
+        return
+
+    if item.stock < quantity:
+        print(f"Insufficient stock. Only {item.stock} items are available.")
+        return
+
+    # Create the order
+    order = warehouse.create_order(customer, item, quantity)
+    print(f"Order placed successfully! Order ID: {order['order_id']}, Total: {order['total']}")
+
+    # Add the order to the customer's order history
+    customer.order_history.append(order)
 
 def view_profile(customer):
+    """Display the customer's profile information."""
     print(f"\n--- Profile of {customer.name} ---")
     print(f"Customer ID: {customer.customer_id}")
     print(f"Email: {customer.email}")
 
 def update_profile(customer):
+    """Update the customer's profile information."""
     print("\n--- Update Profile ---")
     name = input("Enter new name (leave blank to keep current): ")
     email = input("Enter new email (leave blank to keep current): ")
     
-    if name:
-        customer.name = name
-    if email:
-        customer.email = email
+    # Use the Customer's update_profile method to manage updates
+    customer.update_profile(name=name if name else None, email=email if email else None)
     
     print("Profile updated successfully!")
 
 def view_order_history(customer):
+    """Display the customer's order history."""
     print("\n--- Order History ---")
     if customer.order_history:
         for order in customer.order_history:
             print(f"Order ID: {order['order_id']}, Items: {order['items']}, Total: {order['total']}")
     else:
         print("No orders found.")
-
