@@ -73,5 +73,6 @@ if __name__ == "__main__":
     create_mock_suppliers_and_items(supplier_manager)
     create_mock_orders(supplier_manager, warehouse)
 
+
     # Start the main menu
     main_menu(supplier_manager, customer_manager, warehouse)

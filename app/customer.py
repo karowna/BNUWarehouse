@@ -3,8 +3,8 @@ from app.person import Person
 
 class Customer(Person):
     def __init__(self, name, email, person_id):
-        super().__init__(person_id, name, email)  # Use the Person constructor
-        self.order_history = []
+        super().__init__(person_id, name, email) # Using the Person constructor via Super
+        self.order_history: List[Order] = []
 
     def get_role(self):
         return "Customer"

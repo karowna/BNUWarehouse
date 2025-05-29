@@ -65,35 +65,55 @@ def customer_menu(customer, warehouse):
 def browse_warehouse_items(warehouse):
     """Allow the customer to browse available items in the warehouse."""
     print("\n--- Browse Warehouse Items ---")
-    items = warehouse.get_available_stock()  # Assuming this returns a list of items
-    if not items:
-        print("No items available in the warehouse.")
+    filtered_items = warehouse.get_items_above_threshold()
+
+    if not filtered_items:
+        print("No items available at the moment.")
         return
 
-    for item in items:
-        print(f"Item ID: {item.item_id}, Name: {item.name}, Price: {item.price}, Quantity: {item.stock}")
+    for item, (quantity, _) in filtered_items.items():
+        print(f"Name: {item.name}, Price: £{item.price:.2f}, Quantity: {quantity}")
 
 def make_order(customer, warehouse):
-    """Allow the customer to make an order."""
     print("\n--- Make an Order ---")
-    item_id = input("Enter the item ID to order: ")
-    quantity = int(input("Enter the quantity: "))
-    
-    item = warehouse.get_item_by_id(item_id)
-    if not item:
-        print("Item not found in the warehouse.")
+    stock = warehouse.get_items_above_threshold()
+
+    if not stock:
+        print("No items available to order.")
         return
 
-    if item.stock < quantity:
-        print(f"Insufficient stock. Only {item.stock} items are available.")
-        return
+    # Display available items
+    items = list(stock.keys())
+    for idx, item in enumerate(items, start=1):
+        qty = stock[item][0]
+        print(f"{idx}. {item.name} - £{item.price:.2f} (Available: {qty})")
 
-    # Create the order
-    order = warehouse.create_order(customer, item, quantity)
-    print(f"Order placed successfully! Order ID: {order['order_id']}, Total: {order['total']}")
+    try:
+        choice = int(input("Select item number to order: ")) - 1
+        if not (0 <= choice < len(items)):
+            print("Invalid selection.")
+            return
 
-    # Add the order to the customer's order history
-    customer.order_history.append(order)
+        item = items[choice]
+        quantity = int(input(f"Enter quantity to order (max {stock[item][0]}): "))
+        if quantity <= 0 or quantity > stock[item][0]:
+            print("Invalid quantity.")
+            return
+
+        # Create and process the order
+        from app.order import Order  # only if needed
+        order = Order(item=item, quantity=quantity, buyer=customer, seller=warehouse)
+        warehouse.process_order(order)
+
+        # Add to customer's history
+        if not hasattr(customer, "order_history"):
+            customer.order_history = []
+        customer.order_history.append(order)
+
+        print(f"Order placed: {quantity} x {item.name} (£{order.total_price:.2f})")
+
+    except ValueError:
+        print("Invalid input. Please enter numbers.")
 
 def view_profile(customer):
     """Display the customer's profile information."""
@@ -107,16 +127,23 @@ def update_profile(customer):
     name = input("Enter new name (leave blank to keep current): ")
     email = input("Enter new email (leave blank to keep current): ")
     
-    # Use the Customer's update_profile method to manage updates
     customer.update_profile(name=name if name else None, email=email if email else None)
-    
     print("Profile updated successfully!")
 
 def view_order_history(customer):
     """Display the customer's order history."""
     print("\n--- Order History ---")
-    if customer.order_history:
-        for order in customer.order_history:
-            print(f"Order ID: {order['order_id']}, Items: {order['items']}, Total: {order['total']}")
-    else:
+    
+    if not customer.order_history:
         print("No orders found.")
+        return
+
+    headers = ["Order ID", "Item", "Quantity", "Price", "Total", "Seller", "Timestamp"]
+    print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<8} {headers[3]:<8} {headers[4]:<8} {headers[5]:<15} {headers[6]}")
+    print("-" * 90)
+
+    for order in customer.order_history:
+        print(f"{order.order_id:<10} {order.item.name:<15} {order.quantity:<8} "
+              f"£{order.item.price:<7.2f} £{order.total_price:<7.2f} "
+              f"{getattr(order.seller, 'name', 'Warehouse'):<15} "
+              f"{order.timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
