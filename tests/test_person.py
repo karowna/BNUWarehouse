@@ -1,5 +1,5 @@
 import unittest
-from person import Person
+from app.person import Person
 
 class TestPersonInstantiation(unittest.TestCase):
     """Unit tests for the Person class. We need to make sure we cannot instantiate a Person directly since it is an abstract class."""

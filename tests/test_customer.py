@@ -1,5 +1,5 @@
 import unittest
-from customer import Customer, CustomerManager
+from app.customer import Customer, CustomerManager
 
 class TestCustomerManager(unittest.TestCase):
     """Unit tests for the CustomerManager and Customer classes."""

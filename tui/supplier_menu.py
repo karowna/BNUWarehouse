@@ -30,13 +30,14 @@ def supplier_sign_in(supplier_manager):
     supplier = supplier_manager.get_supplier_by_id(supplier_id)
     if supplier:
         print(f"\nWelcome back, {supplier.name}!")
-        supplier_menu(supplier)
+        supplier_menu(supplier_manager, supplier)
     else:
         print("Supplier not found. Please sign up first.")
 
-def supplier_menu(supplier):
+def supplier_menu(supplier_manager, supplier):
     while True:
         print("\n--- Supplier Menu ---")
+        print(f"You're logged in as: {supplier.name} (ID: {supplier.supplier_id})")
         print("1. View Profile")
         print("2. Update Profile")
         print("3. Create Item")
@@ -48,13 +49,13 @@ def supplier_menu(supplier):
         if choice == '1':
             view_supplier_profile(supplier)
         elif choice == '2':
-            update_supplier_profile(supplier)
+            update_supplier_profile(supplier_manager, supplier)
         elif choice == '3':
-            create_item_for_supplier(supplier)
+            create_item_for_supplier(supplier_manager, supplier)
         elif choice == '4':
-            view_supplier_items(supplier)
+            view_supplier_items(supplier_manager, supplier)
         elif choice == '5':
-            remove_item_from_supplier(supplier)
+            remove_item_from_supplier(supplier_manager, supplier)
         elif choice == '0':
             break
         else:
@@ -65,31 +66,26 @@ def view_supplier_profile(supplier):
     print(f"Email: {supplier.email}")
     print(f"Supplier ID: {supplier.supplier_id}")
 
-def update_supplier_profile(supplier):
+def update_supplier_profile(supplier_manager, supplier):
     name = input("Enter new name (leave blank to keep current): ")
     email = input("Enter new email (leave blank to keep current): ")
-    if name:
-        supplier.name = name
-    if email:
-        supplier.email = email
-    print("Profile updated successfully.")
+    try:
+        supplier_manager.update_supplier(supplier.supplier_id, name=name if name else None, email=email if email else None)
+        print("Profile updated successfully.")
+    except ValueError as e:
+        print(e)
 
-def create_item_for_supplier(supplier):
+def create_item_for_supplier(supplier_manager, supplier):
     name = input("Enter item name: ")
     description = input("Enter item description: ")
     try:
         price = float(input("Enter item price: "))
-        item = supplier_manager.create_supplier_item(
-            supplier_id=supplier.supplier_id,
-            name=name,
-            description=description,
-            price=price
-        )
+        item = supplier_manager.create_supplier_item(supplier.supplier_id, name, description, price)
         print(f"Item '{item.name}' created successfully.")
     except ValueError as e:
         print(f"Error: {e}")
 
-def view_supplier_items(supplier):
+def view_supplier_items(supplier_manager, supplier):
     items = supplier_manager.get_supplier_items(supplier.supplier_id)
     if items:
         print("\n--- Items Supplied ---")
@@ -97,3 +93,25 @@ def view_supplier_items(supplier):
             print(f"{item.name}: {item.description} - £{item.price:.2f}")
     else:
         print("No items found.")
+
+def remove_item_from_supplier(supplier_manager, supplier):
+    items = supplier_manager.get_supplier_items(supplier.supplier_id)
+    if not items:
+        print("No items to remove.")
+        return
+
+    print("\n--- Items Supplied ---")
+    for idx, item in enumerate(items, start=1):
+        print(f"{idx}. {item.name}: {item.description} - £{item.price:.2f}")
+
+    try:
+        item_choice = int(input("Enter the number of the item you want to remove: ")) - 1
+        if item_choice < 0 or item_choice >= len(items):
+            print("Invalid item selection.")
+            return
+
+        item = items[item_choice]
+        supplier_manager.remove_item_from_supplier(supplier.supplier_id, item)
+        print(f"Item '{item.name}' removed successfully.")
+    except ValueError:
+        print("Invalid input. Please enter a numeric value.")
