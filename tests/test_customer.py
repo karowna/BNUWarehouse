@@ -1,5 +1,7 @@
 import unittest
 from app.customer import Customer, CustomerManager
+from app.order import Order
+from app.item import Item
 
 class TestCustomerManager(unittest.TestCase):
     """Unit tests for the CustomerManager and Customer classes."""
@@ -8,6 +10,29 @@ class TestCustomerManager(unittest.TestCase):
         """Set up for the tests. Create a CustomerManager and a sample customer."""
         self.manager = CustomerManager()
         self.customer = self.manager.create_customer("Bob", "bob@example.com", "CUST001")
+
+    def test_add_order_appends_to_history(self):
+        """Test that add_order correctly appends an order to the customer's history."""
+        customer = Customer("Alice", "alice@example.com", "1")
+        item = Item("Dirt", "Just dirt", 10.0)
+        order = Order(item=item, quantity=2, buyer=customer, seller="Warehouse")
+
+        customer.add_order(order)
+
+        self.assertIn(order, customer.order_history)
+        self.assertEqual(len(customer.order_history), 1)
+
+    def test_view_order_history_returns_correct_list(self):
+        """Test that view_order_history returns the correct list of orders."""
+        customer = Customer("Alice", "alice@example.com", "1")
+        item = Item("Stone", "Solid stone", 15.0)
+        order = Order(item=item, quantity=1, buyer=customer, seller="Warehouse")
+
+        customer.add_order(order)
+        history = customer.view_order_history()
+
+        self.assertEqual(history, [order])
+
 
     def test_create_customer(self):
         """Test that a customer is created properly."""
