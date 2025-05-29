@@ -1,13 +1,21 @@
-# app/customer.py
 from app.person import Person
 
 class Customer(Person):
-    def __init__(self, name, email, person_id):
-        super().__init__(person_id, name, email) # Using the Person constructor via Super
-        self.order_history: List[Order] = []
+    _customer_counter = 1  # Class-level counter to keep track of created customers
+
+    def __init__(self, name, email):
+        super().__init__(name, email)  # Using the Person constructor via Super
+        self.person_id = self.generate_id()  # Automatically assign a unique ID
+        self.order_history = []  # Initialize the order history as an empty list
 
     def get_role(self):
         return "Customer"
+
+    def generate_id(self):
+        """Generate a unique customer ID."""
+        customer_id = f"cu_{Customer._customer_counter}"
+        Customer._customer_counter += 1  # Increment the counter for next customer
+        return customer_id
 
     @property
     def customer_id(self):
@@ -20,23 +28,14 @@ class Customer(Person):
         """Add an order to the customer's order history."""
         self.order_history.append(order)
 
-    def update_profile(self, name=None, email=None):
-        """Allow the customer to update their own profile."""
-        if name:
-            self.name = name
-        if email:
-            self.email = email
-
 
 class CustomerManager:
     def __init__(self):
         self.customers = {}
 
-    def create_customer(self, name, email, person_id):
+    def create_customer(self, name, email):
         """Create a new customer and store it."""
-        if person_id in self.customers:
-            raise ValueError(f"Customer with ID {person_id} already exists.")
-        customer = Customer(name, email, person_id)
+        customer = Customer(name, email)
         self.customers[customer.customer_id] = customer
         return customer
 

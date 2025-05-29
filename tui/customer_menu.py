@@ -18,12 +18,12 @@ def customer_login(customer_manager, warehouse):
 def sign_up(customer_manager):
     name = input("Enter your name: ")
     email = input("Enter your email: ")
-    customer_id = input("Enter a unique customer ID: ")
     try:
-        customer_manager.create_customer(name, email, customer_id)
-        print(f"Customer {name} created successfully! Your customer ID is {customer_id}.")
+        customer = customer_manager.create_customer(name, email)
+        print(f"Customer {name} created successfully! Your customer ID is {customer.customer_id}. Remember it!")
     except ValueError as e:
         print(e)
+
 
 def sign_in(customer_manager, warehouse):
     customer_id = input("Enter your customer ID: ")

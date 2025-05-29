@@ -9,11 +9,11 @@ class TestCustomerManager(unittest.TestCase):
     def setUp(self):
         """Set up for the tests. Create a CustomerManager and a sample customer."""
         self.manager = CustomerManager()
-        self.customer = self.manager.create_customer("Bob", "bob@example.com", "CUST001")
+        self.customer = self.manager.create_customer("Bob", "bob@example.com")
 
     def test_add_order_appends_to_history(self):
         """Test that add_order correctly appends an order to the customer's history."""
-        customer = Customer("Alice", "alice@example.com", "1")
+        customer = Customer("Alice", "alice@example.com")
         item = Item("Dirt", "Just dirt", 10.0)
         order = Order(item=item, quantity=2, buyer=customer, seller="Warehouse")
 
@@ -24,7 +24,7 @@ class TestCustomerManager(unittest.TestCase):
 
     def test_view_order_history_returns_correct_list(self):
         """Test that view_order_history returns the correct list of orders."""
-        customer = Customer("Alice", "alice@example.com", "1")
+        customer = Customer("Alice", "alice@example.com")
         item = Item("Stone", "Solid stone", 15.0)
         order = Order(item=item, quantity=1, buyer=customer, seller="Warehouse")
 
@@ -33,29 +33,28 @@ class TestCustomerManager(unittest.TestCase):
 
         self.assertEqual(history, [order])
 
-
     def test_create_customer(self):
         """Test that a customer is created properly."""
         self.assertEqual(self.customer.name, "Bob")
         self.assertEqual(self.customer.email, "bob@example.com")
-        self.assertEqual(self.customer.customer_id, "CUST001")
-        self.assertIn("CUST001", self.manager.customers)
+        self.assertTrue(self.customer.customer_id.startswith("cu_"))
+        self.assertIn(self.customer.customer_id, self.manager.customers)
 
-    def test_create_duplicate_customer_raises_error(self):
-        """Test that creating a customer with an existing ID raises a ValueError."""
+    def test_create_customer_wrong_email_format(self):
+        """Test that creating a customer with an invalid email format raises ValueError."""
         with self.assertRaises(ValueError):
-            self.manager.create_customer("Bob", "bob@example.com", "CUST001")
+            self.manager.create_customer("Alice", "alice.com")
 
     def test_get_customer_by_id(self):
         """Test retrieving a customer by their ID."""
-        customer = self.manager.get_customer_by_id("CUST001")
+        customer = self.manager.get_customer_by_id(self.customer.customer_id)
         self.assertIsNotNone(customer)
         self.assertEqual(customer.name, "Bob")
 
     def test_update_customer_profile(self):
         """Test updating a customer's profile (name and email)."""
         self.customer.update_profile(name="Bob Smith", email="bob.smith@example.com")
-        customer = self.manager.get_customer_by_id("CUST001")
+        customer = self.manager.get_customer_by_id(self.customer.customer_id)
         self.assertEqual(customer.name, "Bob Smith")
         self.assertEqual(customer.email, "bob.smith@example.com")
 
@@ -75,8 +74,8 @@ class TestCustomerManager(unittest.TestCase):
 
     def test_delete_customer(self):
         """Test that deleting a customer works as expected."""
-        self.manager.delete_customer("CUST001")
-        self.assertIsNone(self.manager.get_customer_by_id("CUST001"))
+        self.manager.delete_customer(self.customer.customer_id)
+        self.assertIsNone(self.manager.get_customer_by_id(self.customer.customer_id))
 
     def test_delete_nonexistent_customer_raises_error(self):
         """Test that deleting a non-existent customer raises a ValueError."""
