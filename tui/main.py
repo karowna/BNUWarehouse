@@ -54,8 +54,9 @@ if __name__ == "__main__":
 
     warehouse.order_from_supplier(s2, s2.items_supplied[0], 64)
     warehouse.order_from_supplier(s1, s1.items_supplied[0], 32)
-    warehouse.order_from_supplier(s2, s2.items_supplied[0], 16)
-    warehouse.order_from_supplier(s1, s1.items_supplied[0], 8)
-    warehouse.order_from_supplier(s2, s2.items_supplied[0], 4)
+    warehouse.order_from_supplier(s2, s2.items_supplied[1], 16)
+    warehouse.order_from_supplier(s1, s1.items_supplied[1], 8)
+    warehouse.order_from_supplier(s2, s2.items_supplied[2], 4)
+    warehouse.order_from_supplier(s2, s2.items_supplied[0], 64)
 
     main_menu(supplier_manager, customer_manager, warehouse)
