@@ -16,16 +16,5 @@ class Order:
         self.seller = seller
         self.total_price = item.price * quantity
 
-    def generate_invoice(self) -> str:
-        return (
-            f"Invoice - Order #{self.order_id}\n"
-            f"Date: {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}\n"
-            f"Item: {self.item.name}\n"
-            f"Quantity: {self.quantity}\n"
-            f"Total Price: £{self.total_price:.2f}\n"
-            f"Buyer: {getattr(self.buyer, 'name', 'Warehouse')}\n"
-            f"Seller: {getattr(self.seller, 'name', 'Supplier')}"
-            )
-
     def __repr__(self):
         return f"Order #{self.order_id} ({self.item.name}, Qty: {self.quantity}, Buyer: {getattr(self.buyer, 'name', 'Warehouse')})"
