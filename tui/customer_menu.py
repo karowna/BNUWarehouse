@@ -108,7 +108,8 @@ def update_profile(customer):
     name = input("Enter new name (leave blank to keep current): ")
     email = input("Enter new email (leave blank to keep current): ")
     
-    customer.update_profile(name=name if name else None, email=email if email else None)
+    customer.update_profile(name=name, email=email)
+    
     print("Profile updated successfully!")
 
 def view_order_history(customer):

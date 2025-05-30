@@ -22,7 +22,12 @@ class Customer(Person):
         return self.person_id
 
     def view_order_history(self):
+        """Return the customer's order history if it exists."""
+        if not self.order_history:
+            print("No order history available")
+            return None
         return self.order_history
+
 
     def add_order(self, order):
         """Add an order to the customer's order history."""
