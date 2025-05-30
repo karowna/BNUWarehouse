@@ -200,10 +200,7 @@ def manage_finances(finance_compiler):
 def view_all_orders(finance_compiler):
     print("\n--- View All Orders ---")
     summaries = finance_compiler.summarise_orders()
-    if not summaries:
-        print("No orders found.")
-        return
-
+    
     headers = ["Order ID", "Item", "Qty", "Price", "Total", "Buyer", "Seller", "Timestamp"]
     print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<5} {headers[3]:<7} {headers[4]:<8} {headers[5]:<15} {headers[6]:<15} {headers[7]}")
     print("-" * 95)
