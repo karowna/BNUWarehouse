@@ -9,8 +9,10 @@ class TestSupplier(unittest.TestCase):
         self.supplier_manager = SupplierManager()
 
     def test_get_all_suppliers(self):
-        """Test retrieving all suppliers."""
-        self.assertEqual(self.supplier_manager.get_all_suppliers(), [])
+        with self.assertRaises(ValueError) as context:
+            self.supplier_manager.get_all_suppliers()
+        self.assertIn("No suppliers available", str(context.exception))
+
 
         # Create a supplier and check if it appears in the list
         supplier = self.supplier_manager.create_supplier("Steve", "steve@example.com")
@@ -69,8 +71,10 @@ class TestSupplier(unittest.TestCase):
 
     def test_get_supplier_items_invalid_id(self):
         """Test retrieving items for a non-existent supplier ID."""
-        items = self.supplier_manager.get_supplier_items("su_999")  # ID not created
-        self.assertEqual(items, [])
+        with self.assertRaises(ValueError) as context:
+            self.supplier_manager.get_supplier_items("su_999")
+        self.assertIn("Supplier with ID 'su_999' not found", str(context.exception))
+
 
     def test_remove_item_from_supplier_success(self):
         """Test successfully removing an item from a supplier."""
@@ -99,7 +103,7 @@ class TestSupplier(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             self.supplier_manager.remove_item_from_supplier("su_999", item)  # ID "su_999" does not exist
 
-        self.assertIn("Supplier with ID su_999 not found", str(context.exception))
+        self.assertIn("Supplier with ID 'su_999' not found", str(context.exception))
 
     def test_supplier_item_uniqueness(self):
         """Test that duplicate items are not allowed."""

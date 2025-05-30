@@ -53,16 +53,27 @@ class TestWarehouse(unittest.TestCase):
         # Assert that the price of the cloned item has been updated
         self.assertEqual(self.cloned_item.price, 24.99)
 
-    def test_get_items_above_threshold(self):
-        """Test retrieval of items above their stock threshold."""
-        # Add stock with a threshold of 5
-        self.warehouse.inventory.add_stock(self.item, 3, threshold=5)  # Stock is 3, threshold is 5
+    def test_get_available_items(self):
+        """Test that items above their threshold are returned correctly."""
 
-        # Get the items above threshold
-        items_above_threshold = self.warehouse.get_items_above_threshold()
-        
-        # Assert that the cloned item is in the list of items above the threshold
-        self.assertIn(self.cloned_item, items_above_threshold)
+        # Define threshold and quantity
+        threshold = 5
+        quantity = 10
+
+        # Add stock to warehouse inventory
+        self.warehouse.inventory.add_stock(self.item, quantity, threshold=threshold)
+
+        # Simulate a customer order that has been marked as received
+        order = Order(item=self.item, quantity=quantity, buyer=self.customer, seller=self.warehouse, status="received")
+        self.warehouse.orders.append(order)
+
+        # Call the method under test
+        available_items = self.warehouse.get_available_items()
+
+        # Verify that the item appears in the available items with the correct quantity
+        self.assertIn(self.item, available_items)
+        self.assertEqual(available_items[self.item], 20) # 10 (initial) + 10 (added) = 20
+
 
     def test_view_inventory_empty(self):
         """Test that an empty inventory shows an empty dictionary."""
@@ -79,7 +90,7 @@ class TestWarehouse(unittest.TestCase):
         """Test the warehouse ordering items from a supplier."""
         # Order 10 items from the supplier
         order = self.warehouse.order_from_supplier(self.supplier, self.cloned_item, 10)
-        warehouse.mark_order_as_received(order.order_id)
+        self.warehouse.mark_order_as_received(order.order_id)
 
         # Assert the order details
         self.assertEqual(order.buyer, self.warehouse)
