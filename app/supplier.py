@@ -50,17 +50,17 @@ class SupplierManager:
         self.suppliers[supplier.supplier_id] = supplier
         return supplier
 
-    def get_supplier_by_id(self, customer_id):
+    def get_supplier_by_id(self, supplier_id):
         """Retrieve a supplier by their ID."""
-        if not self.customers:
+        if not self.suppliers:
             print("No suppliers available.")
             return None 
 
-        if customer_id not in self.customers:
-            print(f"supplier with ID {customer_id} not found.")
+        if supplier_id not in self.suppliers:
+            print(f"supplier with ID {supplier_id} not found.")
             return None
 
-        return self.customers[customer_id]
+        return self.suppliers[supplier_id]
 
 
     def get_supplier_items(self, supplier_id):
@@ -82,7 +82,6 @@ class SupplierManager:
         if not supplier:
             raise ValueError(f"No supplier found with ID {supplier_id}")
         
-        # Check if the item already exists
         if any(existing_item.name == name and existing_item.description == description for existing_item in supplier.items_supplied):
             raise ValueError(f"Item '{name}' with description '{description}' already exists.")
 
@@ -90,7 +89,6 @@ class SupplierManager:
             if None in (name, description, price):
                 raise ValueError("To create a new item, name, description, and price must be provided.")
             item = Item(name, description, price, supplier)
-
         supplier.add_item(item)
         return item
 
