@@ -116,10 +116,6 @@ def view_order_history(customer):
     """Display the customer's order history."""
     print("\n--- Order History ---")
     
-    if not customer.order_history:
-        print("No orders found.")
-        return
-
     headers = ["Order ID", "Item", "Quantity", "Price", "Total", "Seller", "Status", "Timestamp"]
     print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<8} {headers[3]:<8} {headers[4]:<8} "
           f"{headers[5]:<15} {headers[6]:<10} {headers[7]}")
