@@ -20,8 +20,22 @@ class TestWarehouse(unittest.TestCase):
         self.customer = self.customer_manager.create_customer(name="Alice", email="alice@example.com")
         self.supplier = self.supplier_manager.create_supplier(name="Supplier A", email="supplier@example.com")
 
+        # Give the supplier some items
+        self.supplier_manager.create_supplier_item(
+            supplier_id=self.supplier.supplier_id,
+            name="Widget",
+            description="A small widget",
+            price=19.99
+        )
+        self.supplier_manager.create_supplier_item(
+            supplier_id=self.supplier.supplier_id,
+            name="Gadget",
+            description="A useful gadget",
+            price=29.99
+        )
+
         # Create item instances for testing
-        self.item = Item(name="Widget", description="A small widget", price=19.99, supplier=self.supplier,)
+        self.item = Item(name="Widget", description="A small widget", price=19.99, supplier=self.supplier)
         self.item2 = Item(name="Gadget", description="A small gadget", price=29.99, supplier=self.supplier)  # Add a second item
 
         # Add item to warehouse inventory using add_stock

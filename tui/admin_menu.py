@@ -74,10 +74,6 @@ def order_from_supplier(warehouse, supplier_manager):
         except ValueError as e:
             print(f"Error: {e}")
 
-    if not supplier.items_supplied:
-        print(f"{supplier.name} has no items available.")
-        return
-
     print(f"\n--- Items Supplied by {supplier.name} ---")
     for idx, item in enumerate(supplier.items_supplied, start=1):
         print(f"{idx}. {item.name} - £{item.price:.2f}")
@@ -95,15 +91,14 @@ def order_from_supplier(warehouse, supplier_manager):
         print("Invalid input or selection.")
 
 
-
 def view_inventory(warehouse):
     print("\n--- View Inventory ---")
     inventory = warehouse.view_inventory()
-    if not inventory:
-        print("No items in inventory.")
-    else:
-        for item, (quantity, threshold) in warehouse.inventory.get_full_item_info().items():
+
+    if inventory:
+        for item, (quantity, threshold) in inventory.items():
             print(f"{item} | Quantity: {quantity} | Threshold: {threshold}")
+
 
 def edit_inventory_prices(warehouse):
     inventory = warehouse.inventory.get_full_item_info()

@@ -11,8 +11,13 @@ class Warehouse:
         self.inventory = Inventory()
         self.orders: List[Order] = []
 
-    def view_inventory(self) -> dict:
-        return self.inventory.get_all_items()
+    def view_inventory(self):
+        inventory = self.inventory.get_all_items()
+        if not inventory:
+            print("No items in inventory.")
+            return {}
+
+        return inventory
 
     def mark_order_as_received(self, order_id: int):
         """Marks an order as 'received' and adds stock to inventory."""
@@ -80,6 +85,9 @@ class Warehouse:
 
 
     def order_from_supplier(self, supplier, item: Item, quantity: int) -> Order:
-        """ Warehouse orders stock from a supplier. """
+        """Warehouse orders stock from a supplier. Raises if supplier has no items."""
+        if not supplier.items_supplied:
+            raise ValueError(f"{supplier.name} has no items available.")
         order = self._record_transaction(item, quantity, buyer=self, seller=supplier)
         return order
+
