@@ -37,9 +37,15 @@ class Warehouse:
         self.inventory.add_stock(order.item, order.quantity)
         print(f"Order #{order_id} marked as received and stock updated.")
 
+
     def list_pending_orders(self):
-        """Returns a list of all pending orders."""
-        return [order for order in self.orders if order.status != "received"]
+        """Prints and returns a list of all pending orders."""
+        pending_orders = [order for order in self.orders if order.status != "received"]
+
+        if not pending_orders:
+            print("No pending orders to mark as received.") 
+            return []
+        return pending_orders
 
     def get_available_items(self) -> Dict[Item, int]:
         """Returns items that are above the threshold and marked as 'received', with error handling."""

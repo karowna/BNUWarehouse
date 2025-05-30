@@ -156,10 +156,6 @@ def mark_order_as_received(warehouse):
     # Fetch pending orders using the Warehouse class method
     pending_orders = warehouse.list_pending_orders()
     
-    if not pending_orders:
-        print("No pending orders to mark as received.")
-        return
-
     # List the pending orders for the admin to choose from
     for idx, order in enumerate(pending_orders, start=1):
         print(f"{idx}. Order #{order.order_id}: {order.item.name} (Quantity: {order.quantity}) - Status: {order.status}")
