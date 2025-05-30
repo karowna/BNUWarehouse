@@ -96,9 +96,8 @@ def place_order(customer, warehouse):
         print(f"Error placing order: {e}")
 
 
-
 def view_profile(customer):
-    """Display the customer's profile information."""
+    """Display the customer's profile information.""" # Can just access the customer object directly
     print(f"\n--- Profile of {customer.name} ---")
     print(f"Customer ID: {customer.customer_id}")
     print(f"Email: {customer.email}")

@@ -39,15 +39,18 @@ class CustomerManager:
         self.customers[customer.customer_id] = customer
         return customer
 
-    def get_customer_by_id(self, customer_id: str):
-            """Get customer by ID and handle if customer is not found."""
-            for customer in self.customers:
-                if customer.customer_id == customer_id:
-                    return customer
-            
-            # If no customer found
-            print("Customer not found.")
+    def get_customer_by_id(self, customer_id):
+        """Retrieve a customer by their ID."""
+        if not self.customers:
+            print("No customers available.")
+            return None 
+
+        if customer_id not in self.customers:
+            print(f"Customer with ID {customer_id} not found.")
             return None
+
+        return self.customers[customer_id]
+
 
     def delete_customer(self, customer_id):
         """Delete a customer by their ID."""
