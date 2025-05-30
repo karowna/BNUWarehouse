@@ -29,11 +29,12 @@ def admin_login(warehouse, supplier_manager, finance_compiler):
 def manage_stock(warehouse, supplier_manager):
     while True:
         print("\n--- Manage Warehouse Stock ---")
-        print("You're logged in as Admin at ", warehouse.name)
+        print("You're logged in as Admin at: ", warehouse.name)
         print("1. Order from Supplier")
         print("2. View Inventory")
         print("3. Edit Inventory Prices")
         print("4. Edit Inventory Stock Thresholds")
+        print("5. Mark Order as Received") 
         print("0. Back to Admin Menu")
         choice = input("Enter your choice: ")
 
@@ -45,6 +46,8 @@ def manage_stock(warehouse, supplier_manager):
             edit_inventory_prices(warehouse)
         elif choice == '4':
             edit_inventory_thresholds(warehouse)
+        elif choice == '5':  # Option to mark order as received
+            mark_order_as_received(warehouse)
         elif choice == '0':
             break
         else:
@@ -52,21 +55,26 @@ def manage_stock(warehouse, supplier_manager):
 
 def order_from_supplier(warehouse, supplier_manager):
     print("\n--- Order from Supplier ---")
-    suppliers = supplier_manager.get_all_suppliers()
 
-    if not suppliers:
-        print("No suppliers available.")
+    try:
+        suppliers = supplier_manager.get_all_suppliers()
+    except ValueError as e:
+        print(f"Error: {e}")
         return
 
     for supplier in suppliers:
         print(f"ID: {supplier.supplier_id} | Name: {supplier.name}")
 
-    supplier_id = input("Enter the ID of the supplier to order from: ")
-    supplier = supplier_manager.get_supplier_by_id(supplier_id)
+    while True:
+        supplier_id = input("Enter the ID of the supplier to order from (or 'q' to cancel): ").strip()
+        if supplier_id.lower() == 'q':
+            return
 
-    if not supplier:
-        print("Supplier not found.")
-        return
+        try:
+            supplier = supplier_manager.get_supplier_by_id(supplier_id)
+            break
+        except ValueError as e:
+            print(f"Error: {e}")
 
     if not supplier.items_supplied:
         print(f"{supplier.name} has no items available.")
@@ -87,6 +95,7 @@ def order_from_supplier(warehouse, supplier_manager):
 
     except (ValueError, IndexError):
         print("Invalid input or selection.")
+
 
 
 def view_inventory(warehouse):
@@ -145,6 +154,35 @@ def edit_inventory_thresholds(warehouse):
             print("Invalid selection.")
     except ValueError:
         print("Invalid input.")
+
+
+def mark_order_as_received(warehouse):
+    """Allow the admin to mark an order as received."""
+    print("\n--- Mark Order as Received ---")
+    
+    # Fetch pending orders using the Warehouse class method
+    pending_orders = warehouse.list_pending_orders()
+    
+    if not pending_orders:
+        print("No pending orders to mark as received.")
+        return
+
+    # List the pending orders for the admin to choose from
+    for idx, order in enumerate(pending_orders, start=1):
+        print(f"{idx}. Order #{order.order_id}: {order.item.name} (Quantity: {order.quantity}) - Status: {order.status}")
+
+    try:
+        # Allow the admin to select an order to mark as received
+        choice = int(input("Select order number to mark as received: ")) - 1
+        if 0 <= choice < len(pending_orders):
+            order_to_mark = pending_orders[choice]
+            # Call the Warehouse class method to mark the order as received
+            warehouse.mark_order_as_received(order_to_mark.order_id)
+        else:
+            print("Invalid selection.")
+    except ValueError:
+        print("Invalid input.")
+
 
 def manage_finances(finance_compiler):
     """Manage finances related to orders and transactions."""

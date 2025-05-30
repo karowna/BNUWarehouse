@@ -39,7 +39,9 @@ class SupplierManager:
         self.suppliers = {}
 
     def get_all_suppliers(self):
-        """Return a list of all suppliers."""
+        """Return a list of all suppliers, or raise an error if none exist."""
+        if not self.suppliers:
+            raise ValueError("No suppliers available.")
         return list(self.suppliers.values())
 
     def create_supplier(self, name, email):
@@ -48,9 +50,17 @@ class SupplierManager:
         self.suppliers[supplier.supplier_id] = supplier
         return supplier
 
-    def get_supplier_by_id(self, supplier_id):
-        """Retrieve a supplier by their ID."""
-        return self.suppliers.get(supplier_id)
+    def get_supplier_by_id(self, supplier_id: str):
+        """Retrieve a supplier by their ID, or raise an error if not found or input is invalid."""
+        if not isinstance(supplier_id, str) or not supplier_id.strip():
+            raise ValueError("Invalid supplier ID format. Please provide a non-empty string.")
+
+        supplier = self.suppliers.get(supplier_id)
+        if not supplier:
+            raise ValueError(f"Supplier with ID '{supplier_id}' not found.")
+        
+        return supplier
+
 
     def get_supplier_items(self, supplier_id):
         """Retrieve all items supplied by a given supplier."""

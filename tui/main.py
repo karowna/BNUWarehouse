@@ -40,16 +40,6 @@ def create_mock_orders_to_supplier(supplier_manager, warehouse):
     warehouse.order_from_supplier(supplier2, supplier2.items_supplied[0], 8)   # Cobblestone
 
 
-def create_mock_orders_to_warehouse(customer_manager, warehouse):
-    """Helper function to create orders from customers to the warehouse."""
-    customer = customer_manager.get_customer_by_id("cu_1")  # Bkar
-    dirt_item = next(item for item in warehouse.inventory.get_all_items().keys() if item.name == "Dirt")
-    
-    # Place an order for Dirt item to the warehouse
-    order = warehouse.place_order(customer, dirt_item, 10)
-    customer.add_order(order)
-
-
 def main_menu(supplier_manager, customer_manager, warehouse):
     while True:
         print("\n--- Main Menu ---")
@@ -83,7 +73,6 @@ if __name__ == "__main__":
     create_mock_customers(customer_manager)
     create_mock_suppliers_and_items(supplier_manager)
     create_mock_orders_to_supplier(supplier_manager, warehouse)
-    create_mock_orders_to_warehouse(customer_manager, warehouse)
 
 
     # Start the main menu
