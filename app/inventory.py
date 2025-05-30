@@ -1,6 +1,7 @@
 from typing import Dict, List, Tuple
 from app.item import Item
 
+
 class Inventory:
     def __init__(self):
         self.stock: Dict[Item, Tuple[int, int]] = {}
@@ -12,7 +13,10 @@ class Inventory:
             new_threshold = threshold if threshold is not None else current_threshold
             self.stock[item_copy] = (current_qty + quantity, new_threshold)
         else:
-            self.stock[item_copy] = (quantity, threshold if threshold is not None else 0)
+            self.stock[item_copy] = (
+                quantity,
+                threshold if threshold is not None else 0,
+            )
 
     def remove_stock(self, item: Item, quantity: int) -> None:
         if item not in self.stock:
@@ -45,7 +49,9 @@ class Inventory:
         if not self.stock:
             print("Nothing to see here...")
             return []
-        low_stock = [item for item, (qty, threshold) in self.stock.items() if qty < threshold]
+        low_stock = [
+            item for item, (qty, threshold) in self.stock.items() if qty < threshold
+        ]
         if not low_stock:
             print("All stock levels are healthy.")
         return low_stock

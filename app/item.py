@@ -16,9 +16,10 @@ class Item:
         return hash((self.name, self.description))
 
     def __eq__(self, other):
-        return isinstance(other, Item) and (
-            self.name, self.description
-        ) == (other.name, other.description)
+        return isinstance(other, Item) and (self.name, self.description) == (
+            other.name,
+            other.description,
+        )
 
     def clone(self):
         """Create a copy of the item without shared references."""

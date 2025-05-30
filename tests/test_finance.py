@@ -9,6 +9,7 @@ from app.supplier import Supplier, SupplierManager
 from app.warehouse import Warehouse
 from app.customer import Customer, CustomerManager
 
+
 class TestFinanceCompiler(unittest.TestCase):
 
     def setUp(self):
@@ -16,16 +17,34 @@ class TestFinanceCompiler(unittest.TestCase):
         self.customer_manager = CustomerManager()
         self.supplier_manager = SupplierManager()
 
-        self.customer = self.customer_manager.create_customer(name="Alice", email="alice@example.com")
-        self.supplier = self.supplier_manager.create_supplier(name="Supplier A", email="supplier@example.com")
+        self.customer = self.customer_manager.create_customer(
+            name="Alice", email="alice@example.com"
+        )
+        self.supplier = self.supplier_manager.create_supplier(
+            name="Supplier A", email="supplier@example.com"
+        )
 
-        self.item1 = Item(name="Widget", description="A small widget", price=19.99, supplier=self.supplier)
-        self.item2 = Item(name="Gadget", description="A useful gadget", price=24.99, supplier=self.supplier)
+        self.item1 = Item(
+            name="Widget",
+            description="A small widget",
+            price=19.99,
+            supplier=self.supplier,
+        )
+        self.item2 = Item(
+            name="Gadget",
+            description="A useful gadget",
+            price=24.99,
+            supplier=self.supplier,
+        )
 
-        self.order1 = Order(item=self.item1, quantity=5, buyer=self.customer, seller=self.warehouse)
+        self.order1 = Order(
+            item=self.item1, quantity=5, buyer=self.customer, seller=self.warehouse
+        )
         self.order1.status = "delivered"
 
-        self.order2 = Order(item=self.item2, quantity=2, buyer=self.warehouse, seller=self.supplier)
+        self.order2 = Order(
+            item=self.item2, quantity=2, buyer=self.warehouse, seller=self.supplier
+        )
         self.order2.status = "pending"
 
         self.orders = [self.order1, self.order2]
@@ -46,7 +65,6 @@ class TestFinanceCompiler(unittest.TestCase):
         expected_cost = self.order2.total_price
         cost = self.finance_compiler.total_supplier_costs()
         self.assertEqual(cost, expected_cost)
-
 
     def test_total_customer_revenue_no_delivered_orders(self):
         """Test when there are no delivered customer orders."""
@@ -101,16 +119,15 @@ class TestFinanceCompiler(unittest.TestCase):
         """Test that summarise_orders returns an empty list and prints a message when there are no orders."""
         self.finance_compiler.orders = []
 
-        with patch('sys.stdout', new=io.StringIO()) as fake_out:
+        with patch("sys.stdout", new=io.StringIO()) as fake_out:
             summary = self.finance_compiler.summarise_orders()
             output = fake_out.getvalue()
 
             self.assertEqual(summary, [])
             self.assertIn("No orders found.", output)
 
-
     def test_display_orders_output(self):
-        with patch('sys.stdout', new=io.StringIO()) as fake_out:
+        with patch("sys.stdout", new=io.StringIO()) as fake_out:
             self.finance_compiler.display_orders(self.orders)
             output = fake_out.getvalue()
 
@@ -131,7 +148,7 @@ class TestFinanceCompiler(unittest.TestCase):
         file_path = "test_orders.csv"
         self.finance_compiler.export_orders_to_csv(self.orders, file_path)
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path, "r") as file:
                 lines = file.readlines()
                 self.assertGreater(len(lines), 1)
         finally:

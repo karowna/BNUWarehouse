@@ -3,6 +3,7 @@ from app.customer import Customer, CustomerManager
 from app.order import Order
 from app.item import Item
 
+
 class TestCustomerManager(unittest.TestCase):
     """Unit tests for the CustomerManager and Customer classes."""
 
@@ -99,5 +100,5 @@ class TestCustomerManager(unittest.TestCase):
         self.assertIsNone(history)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

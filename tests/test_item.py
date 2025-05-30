@@ -1,9 +1,11 @@
 import unittest
 from app.item import Item
 
-class MockSupplier: # Mock class to simulate a supplier for testing purposes
+
+class MockSupplier:  # Mock class to simulate a supplier for testing purposes
     def __init__(self, name):
         self.name = name
+
 
 class TestItem(unittest.TestCase):
 
@@ -53,6 +55,6 @@ class TestItem(unittest.TestCase):
         clone.price = 20.0
         self.assertNotEqual(clone.price, original.price)
 
+
 if __name__ == "__main__":
     unittest.main()
-    
