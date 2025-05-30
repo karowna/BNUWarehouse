@@ -21,7 +21,7 @@ class TestWarehouse(unittest.TestCase):
         self.supplier = self.supplier_manager.create_supplier(name="Supplier A", email="supplier@example.com")
 
         # Create item instances for testing
-        self.item = Item(name="Widget", description="A small widget", price=19.99, supplier=self.supplier)
+        self.item = Item(name="Widget", description="A small widget", price=19.99, supplier=self.supplier,)
         self.item2 = Item(name="Gadget", description="A small gadget", price=29.99, supplier=self.supplier)  # Add a second item
 
         # Add item to warehouse inventory using add_stock
@@ -79,7 +79,8 @@ class TestWarehouse(unittest.TestCase):
         """Test the warehouse ordering items from a supplier."""
         # Order 10 items from the supplier
         order = self.warehouse.order_from_supplier(self.supplier, self.cloned_item, 10)
-        
+        warehouse.mark_order_as_received(order.order_id)
+
         # Assert the order details
         self.assertEqual(order.buyer, self.warehouse)
         self.assertEqual(order.seller, self.supplier)

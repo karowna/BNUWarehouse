@@ -65,27 +65,20 @@ def customer_menu(customer, warehouse):
 def browse_warehouse_items(warehouse):
     """Allow the customer to browse available items in the warehouse."""
     print("\n--- Browse Warehouse Items ---")
-    filtered_items = warehouse.get_items_above_threshold()
+    filtered_items = warehouse.get_available_items()
 
-    if not filtered_items:
-        print("No items available at the moment.")
-        return
+    for item, quantity in filtered_items.items():
+        print(f"Name: {item.name}, Price: £{item.price:.2f}, Quantity Available: {quantity}")
 
-    for item, (quantity, _) in filtered_items.items():
-        print(f"Name: {item.name}, Price: £{item.price:.2f}, Quantity: {quantity}")
 
 def place_order(customer, warehouse):
     print("\n--- Place an Order ---")
-    stock_info = warehouse.get_items_above_threshold()
-
-    if not stock_info:
-        print("No items available to order.")
-        return
+    stock_info = warehouse.get_available_items()
 
     items = list(stock_info.keys())
 
     for idx, item in enumerate(items, start=1):
-        available_qty = stock_info[item][0]
+        available_qty = stock_info[item]
         print(f"{idx}. {item.name} - £{item.price:.2f} (Available: {available_qty})")
 
     try:
@@ -97,8 +90,11 @@ def place_order(customer, warehouse):
 
         print(f"Order placed: {quantity} x {item.name} (£{order.total_price:.2f})")
 
-    except (ValueError, IndexError):
-        print("Invalid input or selection.")
+    except (ValueError, IndexError) as e:
+        print(f"Invalid input or selection: {e}")
+    except Exception as e:
+        print(f"Error placing order: {e}")
+
 
 
 def view_profile(customer):
@@ -124,12 +120,13 @@ def view_order_history(customer):
         print("No orders found.")
         return
 
-    headers = ["Order ID", "Item", "Quantity", "Price", "Total", "Seller", "Timestamp"]
-    print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<8} {headers[3]:<8} {headers[4]:<8} {headers[5]:<15} {headers[6]}")
-    print("-" * 90)
+    headers = ["Order ID", "Item", "Quantity", "Price", "Total", "Seller", "Status", "Timestamp"]
+    print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<8} {headers[3]:<8} {headers[4]:<8} "
+          f"{headers[5]:<15} {headers[6]:<10} {headers[7]}")
+    print("-" * 105)
 
     for order in customer.order_history:
         print(f"{order.order_id:<10} {order.item.name:<15} {order.quantity:<8} "
               f"£{order.item.price:<7.2f} £{order.total_price:<7.2f} "
-              f"{getattr(order.seller, 'name', 'Warehouse'):<15} "
+              f"{getattr(order.seller, 'name', 'Warehouse'):<15} {order.status:<10} "
               f"{order.timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
