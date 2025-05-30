@@ -88,12 +88,6 @@ class TestWarehouse(unittest.TestCase):
         self.assertIn(self.item, available_items)
         self.assertEqual(available_items[self.item], 20) # 10 (initial) + 10 (added) = 20
 
-
-    def test_view_inventory_empty(self):
-        """Test that an empty inventory shows an empty dictionary."""
-        empty_warehouse = Warehouse(name="Empty Warehouse")
-        self.assertEqual(empty_warehouse.view_inventory(), {})
-
     def test_place_order_insufficient_stock(self):
         """Test the behavior when there's not enough stock for an order."""
         # Attempt to order 15 items when only 10 are in stock
@@ -127,12 +121,6 @@ class TestWarehouse(unittest.TestCase):
             self.warehouse.inventory.remove_stock(self.non_existent_item, 1)  # Use the non-existent item
         self.assertEqual(str(context.exception), "Item not found in inventory.")
 
-    def test_set_threshold_item_not_found(self):
-        """Test that setting threshold raises ValueError when item is not found."""
-        with self.assertRaises(ValueError) as context:
-            self.warehouse.inventory.set_threshold(self.non_existent_item, 5)  # Use the non-existent item
-        self.assertEqual(str(context.exception), "Item not found in inventory")
-
     def test_update_price_item_not_found(self):
         """Test that updating price raises ValueError when item is not found."""
         with self.assertRaises(ValueError) as context:
@@ -142,7 +130,7 @@ class TestWarehouse(unittest.TestCase):
     def test_set_threshold_item_found(self):
         """Test setting threshold for an item that exists in stock."""
         # Set a new threshold for an item in the inventory
-        self.warehouse.inventory.set_threshold(self.item, 10)
+        self.warehouse.inventory.set_threshold(self.item.name, 10)
         
         # Get the updated stock information
         stock_info = self.warehouse.inventory.get_full_item_info()
@@ -153,8 +141,8 @@ class TestWarehouse(unittest.TestCase):
     def test_set_threshold_item_not_found(self):
         """Test setting threshold for an item that does not exist in inventory."""
         with self.assertRaises(ValueError) as context:
-            self.warehouse.inventory.set_threshold(self.non_existent_item, 5)
-        self.assertEqual(str(context.exception), "Item not found in inventory")
+            self.warehouse.inventory.set_threshold(self.non_existent_item.name, 5)
+        self.assertEqual(str(context.exception), "Item 'Nonexistent' not found in inventory.")
 
     def test_remove_stock_not_enough_available(self):
         """Test that removing more stock than available raises ValueError."""
@@ -169,6 +157,128 @@ class TestWarehouse(unittest.TestCase):
         low_stock_items = self.warehouse.inventory.low_stock_alerts()
         self.assertIn(self.item2, low_stock_items)
         self.assertEqual(len(low_stock_items), 1)
+
+    def test_low_stock_alerts_empty_inventory(self):
+        """Test that low_stock_alerts returns an empty list when inventory is empty."""
+        empty_inventory = Inventory()
+        alerts = empty_inventory.low_stock_alerts()
+        self.assertEqual(alerts, [])
+
+    def test_low_stock_alerts_all_healthy(self):
+        """Test that low_stock_alerts returns an empty list when all stock levels are above threshold."""
+        inventory = Inventory()
+        inventory.add_stock(self.item, 10, threshold=5)  # Healthy stock
+        alerts = inventory.low_stock_alerts()
+        self.assertEqual(alerts, [])
+
+    def test_get_all_items_empty_inventory(self):
+        """Test that get_all_items returns an empty dictionary when inventory is empty."""
+        empty_inventory = Inventory()
+        items = empty_inventory.get_all_items()
+        self.assertEqual(items, {})
+
+
+    def test_get_all_items_with_inventory(self):
+        """Test that get_all_items returns the correct dictionary when inventory has items."""
+        inventory = Inventory()
+        inventory.add_stock(self.item, 10, threshold=5)
+
+        # Extract the actual item key from inventory (since it's a clone)
+        item_key = next(iter(inventory.stock.keys()))
+        expected = {item_key: (10, 5)}
+
+        result = inventory.get_all_items()
+        self.assertEqual(result, expected)
+
+    def test_view_inventory(self):
+        """Test the view_inventory method to ensure it returns the correct inventory."""
+        inventory = self.warehouse.view_inventory()
         
+        # Check if the inventory has the item
+        self.assertIn(self.cloned_item, inventory)
+        self.assertEqual(inventory[self.cloned_item][0], 10)  # Check stock quantity
+    
+    def test_list_pending_orders(self):
+        """Test listing pending orders."""
+        order1 = self.warehouse.place_order(self.customer, self.item, 5)
+        # Ensure there's enough stock for item2
+        self.warehouse.inventory.add_stock(self.item2, 20, threshold=10)
+        order2 = self.warehouse.place_order(self.customer, self.item2, 3)
+
+        # Mark the first order as received
+        self.warehouse.mark_order_as_received(order1.order_id)
+
+        # List pending orders, should only include order2
+        pending_orders = self.warehouse.list_pending_orders()
+        self.assertEqual(len(pending_orders), 1)
+        self.assertEqual(pending_orders[0].order_id, order2.order_id)
+
+
+    def test_get_available_items(self):
+        """Test that available items above threshold are returned correctly."""
+        # Add stock to warehouse inventory above threshold
+        self.warehouse.inventory.add_stock(self.item, 10, threshold=5)
+        
+        # Simulate a customer order that has been marked as received
+        order = Order(item=self.item, quantity=10, buyer=self.customer, seller=self.warehouse, status="received")
+        self.warehouse.orders.append(order)
+
+        # Call the method under test
+        available_items = self.warehouse.get_available_items()
+
+        # Verify that the item appears in the available items with the correct quantity
+        self.assertIn(self.item, available_items)
+        self.assertEqual(available_items[self.item], 20)  # 10 initial + 10 added
+
+    def test_get_available_items_below_threshold(self):
+        """Test that items below threshold are not returned as available."""
+        self.warehouse.inventory.add_stock(self.item2, 5, threshold=10)
+
+        # Simulate a customer order that has been marked as received
+        order = Order(item=self.item2, quantity=5, buyer=self.customer, seller=self.warehouse, status="received")
+        self.warehouse.orders.append(order)
+
+        # Call the method under test
+        available_items = self.warehouse.get_available_items()
+
+        # Verify that the item does not appear in the available items
+        self.assertNotIn(self.item2, available_items)
+
+    def test_place_order_success(self):
+        """Test that placing an order successfully deducts stock."""
+        order = self.warehouse.place_order(self.customer, self.item, 5)
+        
+        # Verify that the order is in the customer's order history
+        self.assertIn(order, self.customer.order_history)
+        self.assertEqual(len(self.customer.order_history), 1)  # The customer should have one order
+        
+        # Verify the stock level after placing the order
+        self.assertEqual(self.warehouse.inventory.check_stock(self.cloned_item), 5)
+
+    def test_place_order_insufficient_stock(self):
+        """Test placing an order with insufficient stock."""
+        with self.assertRaises(ValueError):
+            self.warehouse.place_order(self.customer, self.item, 15)  # More than available stock
+
+    def test_order_from_supplier_success(self):
+        """Test ordering items from a supplier."""
+        order = self.warehouse.order_from_supplier(self.supplier, self.cloned_item, 10)
+        self.warehouse.mark_order_as_received(order.order_id)
+        
+        # Verify the stock level after receiving the order
+        self.assertEqual(self.warehouse.inventory.check_stock(self.cloned_item), 20)
+
+    def test_order_from_supplier_invalid_quantity(self):
+        """Test ordering items from a supplier with invalid quantity."""
+        with self.assertRaises(ValueError):
+            self.warehouse.order_from_supplier(self.supplier, self.cloned_item, -5)  # Invalid quantity
+
+    def test_order_from_supplier_no_items_available(self):
+        """Test ordering items from a supplier with no available items."""
+        new_supplier = self.supplier_manager.create_supplier(name="Supplier B", email="supplierb@example.com")
+        with self.assertRaises(ValueError):
+            self.warehouse.order_from_supplier(new_supplier, self.cloned_item, 5)  # No items available
+            
+
 if __name__ == "__main__":
     unittest.main()

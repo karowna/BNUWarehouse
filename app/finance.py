@@ -14,12 +14,13 @@ class FinanceCompiler:
             order for order in self.orders
             if order.seller.__class__.__name__ == 'Warehouse' and order.status == 'delivered'
         ]
-
+        
         if not customer_orders:
             print("Warning: No delivered customer orders found.")
             return 0.0
 
         return sum(order.total_price for order in customer_orders)
+
 
     def total_supplier_costs(self) -> float:
         """Calculate total costs from supplier orders with status 'received'"""
@@ -27,7 +28,7 @@ class FinanceCompiler:
             order for order in self.orders
             if order.seller.__class__.__name__ == 'Supplier' and order.status == 'received'
         ]
-
+        
         if not supplier_orders:
             print("Warning: No received supplier orders found.")
             return 0.0

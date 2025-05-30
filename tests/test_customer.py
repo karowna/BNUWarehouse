@@ -86,5 +86,18 @@ class TestCustomerManager(unittest.TestCase):
         """Test the get_role method to ensure the customer role is returned correctly."""
         self.assertEqual(self.customer.get_role(), "Customer")
 
+    def test_get_customer_by_id_not_found(self):
+        """Test that get_customer_by_id returns None when the customer ID is not found."""
+        non_existent_id = "cu_9999"
+        customer = self.manager.get_customer_by_id(non_existent_id)
+        self.assertIsNone(customer)
+
+    def test_view_order_history_empty(self):
+        """Test that view_order_history returns None when there is no order history."""
+        customer = Customer("Charlie", "charlie@example.com")
+        history = customer.view_order_history()
+        self.assertIsNone(history)
+
+
 if __name__ == '__main__':
     unittest.main()
