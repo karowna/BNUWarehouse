@@ -44,7 +44,7 @@ def manage_stock(warehouse, supplier_manager):
             edit_inventory_prices(warehouse)
         elif choice == "4":
             edit_inventory_thresholds(warehouse)
-        elif choice == "5":  # Option to mark order as received
+        elif choice == "5":
             mark_order_as_received(warehouse)
         elif choice == "0":
             break
@@ -169,21 +169,17 @@ def mark_order_as_received(warehouse):
     """Allow the admin to mark an order as received."""
     print("\n--- Mark Order as Received ---")
 
-    # Fetch pending orders using the Warehouse class method
     pending_orders = warehouse.list_pending_orders()
 
-    # List the pending orders for the admin to choose from
     for idx, order in enumerate(pending_orders, start=1):
         print(
             f"{idx}. Order #{order.order_id}: {order.item.name} (Quantity: {order.quantity}) - Status: {order.status}"
         )
 
     try:
-        # Allow the admin to select an order to mark as received
         choice = int(input("Select order number to mark as received: ")) - 1
         if 0 <= choice < len(pending_orders):
             order_to_mark = pending_orders[choice]
-            # Call the Warehouse class method to mark the order as received
             warehouse.mark_order_as_received(order_to_mark.order_id)
         else:
             print("Invalid selection.")
@@ -258,7 +254,6 @@ def deep_dive_financials(finance_compiler):
     customer_orders = finance_compiler.get_customer_orders()
     supplier_orders = finance_compiler.get_supplier_orders()
 
-    # Display orders
     print("\nCustomer Orders:")
     for order in customer_orders:
         print(
