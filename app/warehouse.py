@@ -11,8 +11,13 @@ class Warehouse:
         self.inventory = Inventory()
         self.orders: List[Order] = []
 
-    def view_inventory(self) -> dict:
-        return self.inventory.get_all_items()
+    def view_inventory(self):
+        inventory = self.inventory.get_all_items()
+        if not inventory:
+            print("No items in inventory.")
+            return {}
+
+        return inventory
 
     def mark_order_as_received(self, order_id: int):
         """Marks an order as 'received' and adds stock to inventory."""
@@ -32,27 +37,29 @@ class Warehouse:
         self.inventory.add_stock(order.item, order.quantity)
         print(f"Order #{order_id} marked as received and stock updated.")
 
+
     def list_pending_orders(self):
-        """Returns a list of all pending orders."""
-        return [order for order in self.orders if order.status != "received"]
+        """Prints and returns a list of all pending orders."""
+        pending_orders = [order for order in self.orders if order.status != "received"]
+
+        if not pending_orders:
+            print("No pending orders to mark as received.") 
+            return []
+        return pending_orders
 
     def get_available_items(self) -> Dict[Item, int]:
-        """Returns items that are above the threshold and marked as 'received', with error handling."""
+        """Returns items that are above the threshold and marked as 'received'."""
         available_items = {}
 
         for item, (quantity, threshold) in self.inventory.get_full_item_info().items():
-            try:
-                if quantity > threshold and any(order.item == item and order.status == "received" for order in self.orders):
-                    available_items[item] = quantity
-            except Exception as e:
-                print(f"Error processing item '{item.name}': {e}")
-                continue
+            if quantity > threshold and any(order.item == item and order.status == "received" for order in self.orders):
+                available_items[item] = quantity
 
-        # Check if no items are available
         if not available_items:
             print("No items are currently available for purchase.")
         
         return available_items
+
 
 
     def _record_transaction(self, item: Item, quantity: int, buyer, seller) -> Order:
@@ -80,6 +87,12 @@ class Warehouse:
 
 
     def order_from_supplier(self, supplier, item: Item, quantity: int) -> Order:
-        """ Warehouse orders stock from a supplier. """
+        """Warehouse orders stock from a supplier."""
+        if quantity <= 0:
+            raise ValueError(f"Quantity must be greater than zero. You provided {quantity}.")
+
+        if not supplier.items_supplied:
+            raise ValueError(f"{supplier.name} has no items available.")
+        
         order = self._record_transaction(item, quantity, buyer=self, seller=supplier)
         return order

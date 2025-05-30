@@ -22,7 +22,12 @@ class Customer(Person):
         return self.person_id
 
     def view_order_history(self):
+        """Return the customer's order history if it exists."""
+        if not self.order_history:
+            print("No order history available")
+            return None
         return self.order_history
+
 
     def add_order(self, order):
         """Add an order to the customer's order history."""
@@ -41,7 +46,16 @@ class CustomerManager:
 
     def get_customer_by_id(self, customer_id):
         """Retrieve a customer by their ID."""
-        return self.customers.get(customer_id)
+        if not self.customers:
+            print("No customers available.")
+            return None 
+
+        if customer_id not in self.customers:
+            print(f"Customer with ID {customer_id} not found.")
+            return None
+
+        return self.customers[customer_id]
+
 
     def delete_customer(self, customer_id):
         """Delete a customer by their ID."""

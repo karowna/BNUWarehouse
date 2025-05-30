@@ -14,12 +14,13 @@ class FinanceCompiler:
             order for order in self.orders
             if order.seller.__class__.__name__ == 'Warehouse' and order.status == 'delivered'
         ]
-
+        
         if not customer_orders:
             print("Warning: No delivered customer orders found.")
             return 0.0
 
         return sum(order.total_price for order in customer_orders)
+
 
     def total_supplier_costs(self) -> float:
         """Calculate total costs from supplier orders with status 'received'"""
@@ -27,7 +28,7 @@ class FinanceCompiler:
             order for order in self.orders
             if order.seller.__class__.__name__ == 'Supplier' and order.status == 'received'
         ]
-
+        
         if not supplier_orders:
             print("Warning: No received supplier orders found.")
             return 0.0
@@ -37,21 +38,50 @@ class FinanceCompiler:
 
     def calculate_profit(self) -> float:
         """Calculate profit (customer revenue - supplier costs)"""
-        return self.total_customer_revenue() - self.total_supplier_costs()
+        customer_revenue = self.total_customer_revenue()
+        supplier_costs = self.total_supplier_costs()
+
+        # Check if there's no revenue or costs
+        if customer_revenue == 0:
+            print("No customer revenue found.")
+        if supplier_costs == 0:
+            print("No supplier costs found.")
+
+        return customer_revenue - supplier_costs
+
 
     def get_customer_orders(self) -> List[Order]:
         """Get all customer orders with status 'delivered'"""
-        return [order for order in self.orders
-                if order.seller.__class__.__name__ == 'Warehouse' and order.status == 'delivered']
+        customer_orders = [order for order in self.orders
+                        if order.seller.__class__.__name__ == 'Warehouse' and order.status == 'delivered']
+
+        # Check if there are no customer orders delivered
+        if not customer_orders:
+            print("No customer orders with 'delivered' status found.")
+
+        return customer_orders
+
 
     def get_supplier_orders(self) -> List[Order]:
         """Get all supplier orders with status 'received'"""
-        return [order for order in self.orders
-                if order.seller.__class__.__name__ == 'Supplier' and order.status == 'received']
+        supplier_orders = [order for order in self.orders
+                        if order.seller.__class__.__name__ == 'Supplier' and order.status == 'received']
+
+        if not supplier_orders:
+            print("No supplier orders with 'received' status found.")
+
+        return supplier_orders
+
 
     def get_all_orders(self) -> List[Order]:
         """Get all orders (regardless of status)"""
-        return self.orders
+        all_orders = self.orders
+
+        if not all_orders:
+            print("No orders found.")
+
+        return all_orders
+
 
     def display_orders(self, orders: List[Order]):
         """Display orders in a formatted table"""
@@ -95,5 +125,9 @@ class FinanceCompiler:
         }
 
     def summarise_orders(self) -> List[dict]:
-        """Summarize all orders in the system"""
+        """Summarizes all orders in the system and prints a message if there are no orders."""
+        if not self.orders:
+            print("No orders found.")
+            return []
+
         return [self._summarise_order(order) for order in self.orders]

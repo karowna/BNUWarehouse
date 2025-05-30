@@ -28,11 +28,11 @@ def sign_up(customer_manager):
 def sign_in(customer_manager, warehouse):
     customer_id = input("Enter your customer ID: ")
     customer = customer_manager.get_customer_by_id(customer_id)
+
     if customer:
         print(f"\nWelcome back, {customer.name}!")
         customer_menu(customer, warehouse)
-    else:
-        print("Customer not found. Please sign up first.")
+
 
 def customer_menu(customer, warehouse):
     """Main menu for the customer to navigate through the available actions."""
@@ -96,9 +96,8 @@ def place_order(customer, warehouse):
         print(f"Error placing order: {e}")
 
 
-
 def view_profile(customer):
-    """Display the customer's profile information."""
+    """Display the customer's profile information.""" # Can just access the customer object directly
     print(f"\n--- Profile of {customer.name} ---")
     print(f"Customer ID: {customer.customer_id}")
     print(f"Email: {customer.email}")
@@ -109,17 +108,14 @@ def update_profile(customer):
     name = input("Enter new name (leave blank to keep current): ")
     email = input("Enter new email (leave blank to keep current): ")
     
-    customer.update_profile(name=name if name else None, email=email if email else None)
+    customer.update_profile(name=name, email=email)
+    
     print("Profile updated successfully!")
 
 def view_order_history(customer):
     """Display the customer's order history."""
     print("\n--- Order History ---")
     
-    if not customer.order_history:
-        print("No orders found.")
-        return
-
     headers = ["Order ID", "Item", "Quantity", "Price", "Total", "Seller", "Status", "Timestamp"]
     print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<8} {headers[3]:<8} {headers[4]:<8} "
           f"{headers[5]:<15} {headers[6]:<10} {headers[7]}")

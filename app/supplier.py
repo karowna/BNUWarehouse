@@ -50,24 +50,31 @@ class SupplierManager:
         self.suppliers[supplier.supplier_id] = supplier
         return supplier
 
-    def get_supplier_by_id(self, supplier_id: str):
-        """Retrieve a supplier by their ID, or raise an error if not found or input is invalid."""
-        if not isinstance(supplier_id, str) or not supplier_id.strip():
-            raise ValueError("Invalid supplier ID format. Please provide a non-empty string.")
+    def get_supplier_by_id(self, supplier_id):
+        """Retrieve a supplier by their ID."""
+        if not self.suppliers:
+            print("No suppliers available.")
+            return None 
 
-        supplier = self.suppliers.get(supplier_id)
-        if not supplier:
-            raise ValueError(f"Supplier with ID '{supplier_id}' not found.")
-        
-        return supplier
+        if supplier_id not in self.suppliers:
+            print(f"supplier with ID {supplier_id} not found.")
+            return None
+
+        return self.suppliers[supplier_id]
 
 
     def get_supplier_items(self, supplier_id):
         """Retrieve all items supplied by a given supplier."""
         supplier = self.get_supplier_by_id(supplier_id)
-        if supplier:
-            return supplier.items_supplied
-        return []
+        
+        if not supplier:
+            raise ValueError(f"Supplier with ID {supplier_id} not found.")
+        
+        if not supplier.items_supplied:
+            raise ValueError(f"No items found for supplier with ID {supplier_id}.")
+        
+        return supplier.items_supplied
+
 
     def create_supplier_item(self, supplier_id, name=None, description=None, price=None, item=None):
         """Create a new item for the given supplier."""
@@ -75,7 +82,6 @@ class SupplierManager:
         if not supplier:
             raise ValueError(f"No supplier found with ID {supplier_id}")
         
-        # Check if the item already exists
         if any(existing_item.name == name and existing_item.description == description for existing_item in supplier.items_supplied):
             raise ValueError(f"Item '{name}' with description '{description}' already exists.")
 
@@ -83,7 +89,6 @@ class SupplierManager:
             if None in (name, description, price):
                 raise ValueError("To create a new item, name, description, and price must be provided.")
             item = Item(name, description, price, supplier)
-
         supplier.add_item(item)
         return item
 
