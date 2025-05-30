@@ -15,6 +15,7 @@ class Order:
         self.buyer = buyer
         self.seller = seller
         self.total_price = item.price * quantity
+        self.status = "pending"  # Default status is 'pending'
 
     def __repr__(self):
-        return f"Order #{self.order_id} ({self.item.name}, Qty: {self.quantity}, Buyer: {getattr(self.buyer, 'name', 'Warehouse')})"
+        return f"Order #{self.order_id} ({self.item.name}, Qty: {self.quantity}, Buyer: {getattr(self.buyer, 'name', 'Warehouse')}, Status: {self.status})"
