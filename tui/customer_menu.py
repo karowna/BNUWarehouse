@@ -28,11 +28,11 @@ def sign_up(customer_manager):
 def sign_in(customer_manager, warehouse):
     customer_id = input("Enter your customer ID: ")
     customer = customer_manager.get_customer_by_id(customer_id)
+
     if customer:
         print(f"\nWelcome back, {customer.name}!")
         customer_menu(customer, warehouse)
-    else:
-        print("Customer not found. Please sign up first.")
+
 
 def customer_menu(customer, warehouse):
     """Main menu for the customer to navigate through the available actions."""

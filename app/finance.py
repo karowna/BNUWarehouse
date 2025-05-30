@@ -123,7 +123,7 @@ class FinanceCompiler:
             "timestamp": order.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
         }
 
- def summarise_orders(self) -> List[dict]:
+    def summarise_orders(self) -> List[dict]:
         """Summarizes all orders in the system and prints a message if there are no orders."""
         if not self.orders:
             print("No orders found.")
