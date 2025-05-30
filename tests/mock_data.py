@@ -68,6 +68,8 @@ def create_mock_orders_to_warehouse(customer_manager, warehouse):
     order2 = warehouse.place_order(customer2, gold_ore_item, 10)
     order3 = warehouse.place_order(customer1, gold_ore_item, 80)
 
+    warehouse.inventory.set_threshold("Gold Ore", 10) # Threshold should show up on the alerts menu
+
 
 def import_mock_data():
     """Import mock data for testing."""
