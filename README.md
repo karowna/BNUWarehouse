@@ -15,3 +15,8 @@ Use for running unit tests and running the program
 ```
 coverage run -m unittest discover && coverage report && coverage html | python3 -m tui.main.py
 ```
+
+To format the code nicely use
+```
+black .
+```
