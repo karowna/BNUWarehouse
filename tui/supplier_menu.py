@@ -27,7 +27,7 @@ def supplier_sign_up(supplier_manager):
 def supplier_sign_in(supplier_manager):
     supplier_id = input("Enter your supplier ID: ")
     supplier = supplier_manager.get_supplier_by_id(supplier_id)
-    
+
     if supplier:
         print(f"\nWelcome back, {supplier.name}!")
         supplier_menu(supplier_manager, supplier)
@@ -60,12 +60,11 @@ def supplier_menu(supplier_manager, supplier):
             print("Invalid choice. Please try again.")
 
 def view_supplier_profile(supplier):
-    print(f"Name: {supplier.name}")
+    print(f"\n--- Profile of {customer.name} ---")
     print(f"Email: {supplier.email}")
     print(f"Supplier ID: {supplier.supplier_id}")
 
 def update_supplier_profile(supplier):
-    """Update the supplier's profile."""
     name = input("Enter new name (leave blank to keep current): ")
     email = input("Enter new email (leave blank to keep current): ")
     
@@ -94,16 +93,13 @@ def view_supplier_items(supplier_manager, supplier):
         print("No items found.")
 
 def remove_item_from_supplier(supplier_manager, supplier):
-    items = supplier_manager.get_supplier_items(supplier.supplier_id)
-    if not items:
-        print("No items to remove.")
-        return
-
-    print("\n--- Items Supplied ---")
-    for idx, item in enumerate(items, start=1):
-        print(f"{idx}. {item.name}: {item.description} - £{item.price:.2f}")
-
     try:
+        items = supplier_manager.get_supplier_items(supplier.supplier_id)
+
+        print("\n--- Items Supplied ---")
+        for idx, item in enumerate(items, start=1):
+            print(f"{idx}. {item.name}: {item.description} - £{item.price:.2f}")
+
         item_choice = int(input("Enter the number of the item you want to remove: ")) - 1
         if item_choice < 0 or item_choice >= len(items):
             print("Invalid item selection.")
@@ -112,5 +108,7 @@ def remove_item_from_supplier(supplier_manager, supplier):
         item = items[item_choice]
         supplier_manager.remove_item_from_supplier(supplier.supplier_id, item)
         print(f"Item '{item.name}' removed successfully.")
+    except ValueError as e:
+        print(f"Error: {e}")
     except ValueError:
         print("Invalid input. Please enter a numeric value.")

@@ -66,9 +66,15 @@ class SupplierManager:
     def get_supplier_items(self, supplier_id):
         """Retrieve all items supplied by a given supplier."""
         supplier = self.get_supplier_by_id(supplier_id)
-        if supplier:
-            return supplier.items_supplied
-        return []
+        
+        if not supplier:
+            raise ValueError(f"Supplier with ID {supplier_id} not found.")
+        
+        if not supplier.items_supplied:
+            raise ValueError(f"No items found for supplier with ID {supplier_id}.")
+        
+        return supplier.items_supplied
+
 
     def create_supplier_item(self, supplier_id, name=None, description=None, price=None, item=None):
         """Create a new item for the given supplier."""
