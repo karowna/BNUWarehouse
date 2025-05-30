@@ -68,7 +68,6 @@ def create_mock_orders_to_supplier(supplier_manager, warehouse):
         warehouse.order_from_supplier(supplier1, supplier1.items_supplied[3], 100)
     )  # Gold Ore
 
-    # Mark each order as received
     for order in orders_to_receive:
         order.status = "received"
         warehouse.inventory.add_stock(order.item, order.quantity)

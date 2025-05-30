@@ -63,14 +63,14 @@ class TestCustomerManager(unittest.TestCase):
         """Test updating a customer's profile with no changes."""
         initial_name = self.customer.name
         initial_email = self.customer.email
-        self.customer.update_profile()  # No updates
+        self.customer.update_profile()
         self.assertEqual(self.customer.name, initial_name)
         self.assertEqual(self.customer.email, initial_email)
 
     def test_update_customer_profile_partial_update(self):
         """Test updating only one field of the profile (email)."""
         self.customer.update_profile(email="bob.newemail@example.com")
-        self.assertEqual(self.customer.name, "Bob")  # Name should remain the same
+        self.assertEqual(self.customer.name, "Bob")
         self.assertEqual(self.customer.email, "bob.newemail@example.com")
 
     def test_delete_customer(self):

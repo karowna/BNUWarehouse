@@ -68,13 +68,13 @@ class TestFinanceCompiler(unittest.TestCase):
 
     def test_total_customer_revenue_no_delivered_orders(self):
         """Test when there are no delivered customer orders."""
-        self.finance_compiler.orders = [self.order2]  # No customer orders delivered
+        self.finance_compiler.orders = [self.order2]
         revenue = self.finance_compiler.total_customer_revenue()
         self.assertEqual(revenue, 0.0)
 
     def test_total_supplier_costs_no_received_orders(self):
         """Test when there are no received supplier orders."""
-        self.finance_compiler.orders = [self.order1]  # No supplier orders received
+        self.finance_compiler.orders = [self.order1]
         costs = self.finance_compiler.total_supplier_costs()
         self.assertEqual(costs, 0.0)
 
@@ -92,23 +92,24 @@ class TestFinanceCompiler(unittest.TestCase):
 
     def test_get_customer_orders_no_delivered(self):
         """Test when there are no customer orders with 'delivered' status."""
-        self.finance_compiler.orders = [self.order2]  # No delivered customer orders
+        self.finance_compiler.orders = [self.order2]
         customer_orders = self.finance_compiler.get_customer_orders()
         self.assertEqual(customer_orders, [])
 
     def test_get_supplier_orders_no_received(self):
         """Test when there are no supplier orders with 'received' status."""
-        self.finance_compiler.orders = [self.order1]  # No received supplier orders
+        self.finance_compiler.orders = [self.order1]
         supplier_orders = self.finance_compiler.get_supplier_orders()
         self.assertEqual(supplier_orders, [])
 
     def test_get_all_orders_no_orders(self):
         """Test when there are no orders."""
-        self.finance_compiler.orders = []  # No orders
+        self.finance_compiler.orders = []
         all_orders = self.finance_compiler.get_all_orders()
         self.assertEqual(all_orders, [])
 
     def test_summarise_orders(self):
+        """Test that summarise_orders returns a list of dictionaries with order summaries."""
         summary = self.finance_compiler.summarise_orders()
         self.assertEqual(len(summary), 2)
         self.assertIn("order_id", summary[0])

@@ -2,7 +2,7 @@ import unittest
 from app.item import Item
 
 
-class MockSupplier:  # Mock class to simulate a supplier for testing purposes
+class MockSupplier:  # Mock class to simulate a supplier for testing purposes (and to demonstrate mock capabilities)
     def __init__(self, name):
         self.name = name
 

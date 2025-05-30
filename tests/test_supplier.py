@@ -34,12 +34,10 @@ class TestSupplier(unittest.TestCase):
 
     def test_get_all_suppliers(self):
         """Test fetching all suppliers."""
-        # Test with no suppliers
         with self.assertRaises(ValueError) as context:
             self.supplier_manager.get_all_suppliers()
         self.assertIn("No suppliers available", str(context.exception))
 
-        # Create a supplier and check if it appears in the list
         supplier = self.supplier_manager.create_supplier("Steve", "steve@example.com")
         suppliers = self.supplier_manager.get_all_suppliers()
         self.assertEqual(len(suppliers), 1)
@@ -76,9 +74,7 @@ class TestSupplier(unittest.TestCase):
         """Test retrieving items for a supplier with no items."""
         supplier = self.supplier_manager.create_supplier("Steve", "steve@example.com")
         with self.assertRaises(ValueError) as context:
-            self.supplier_manager.get_supplier_items(
-                supplier.supplier_id
-            )  # Supplier with no items
+            self.supplier_manager.get_supplier_items(supplier.supplier_id)
         self.assertIn(
             f"No items found for supplier with ID {supplier.supplier_id}.",
             str(context.exception),
@@ -115,9 +111,7 @@ class TestSupplier(unittest.TestCase):
         """Test removing an item from a supplier that does not exist."""
         item = Item(name="Dirt", description="Just dirt", price=10.0)
         with self.assertRaises(ValueError) as context:
-            self.supplier_manager.remove_item_from_supplier(
-                "su_999", item
-            )  # ID "su_999" does not exist
+            self.supplier_manager.remove_item_from_supplier("su_999", item)
         self.assertIn("Supplier with ID su_999 not found", str(context.exception))
 
     def test_supplier_item_uniqueness(self):
@@ -164,7 +158,7 @@ class TestSupplier(unittest.TestCase):
 
     def test_get_supplier_by_id_no_suppliers(self):
         """Test that get_supplier_by_id returns None when no suppliers exist."""
-        manager = SupplierManager()  # No suppliers added
+        manager = SupplierManager()
         result = manager.get_supplier_by_id("su_1")
         self.assertIsNone(result)
 
@@ -172,7 +166,7 @@ class TestSupplier(unittest.TestCase):
         """Test that get_supplier_by_id returns None when supplier ID is not found."""
         manager = SupplierManager()
         supplier = manager.create_supplier("Test Supplier", "test@example.com")
-        invalid_id = "su_9999"  # ID that doesn't exist
+        invalid_id = "su_9999"
         result = manager.get_supplier_by_id(invalid_id)
         self.assertIsNone(result)
 
