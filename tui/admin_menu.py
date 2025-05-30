@@ -7,8 +7,6 @@ def admin_login(warehouse, supplier_manager, finance_compiler):
             for item in low_stock_items:
                 quantity, threshold = warehouse.inventory.stock[item]
                 print(f"- {item.name} (Qty: {quantity}, Threshold: {threshold})")
-        else:
-            print("Nothing to report.")
 
         print("\n--- Admin Menu ---")
         print("1. Manage Stock")

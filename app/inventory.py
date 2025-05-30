@@ -42,9 +42,13 @@ class Inventory:
         raise ValueError(f"Item '{item_name}' not found in inventory.")
 
     def low_stock_alerts(self) -> List[Item]:
-        return [item for item, (qty, threshold) in self.stock.items() if qty < threshold]
-
-
+        if not self.stock:
+            print("Nothing to see here...")
+            return []
+        low_stock = [item for item, (qty, threshold) in self.stock.items() if qty < threshold]
+        if not low_stock:
+            print("All stock levels are healthy.")
+        return low_stock
 
     def get_all_items(self) -> Dict[Item, int]:
         return {item: qty for item, (qty, _) in self.stock.items()}
