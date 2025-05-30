@@ -91,9 +91,12 @@ class Warehouse:
 
 
     def order_from_supplier(self, supplier, item: Item, quantity: int) -> Order:
-        """Warehouse orders stock from a supplier. Raises if supplier has no items."""
+        """Warehouse orders stock from a supplier."""
+        if quantity <= 0:
+            raise ValueError(f"Quantity must be greater than zero. You provided {quantity}.")
+
         if not supplier.items_supplied:
             raise ValueError(f"{supplier.name} has no items available.")
+        
         order = self._record_transaction(item, quantity, buyer=self, seller=supplier)
         return order
-

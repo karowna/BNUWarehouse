@@ -78,17 +78,24 @@ def order_from_supplier(warehouse, supplier_manager):
     for idx, item in enumerate(supplier.items_supplied, start=1):
         print(f"{idx}. {item.name} - £{item.price:.2f}")
 
-    try:
-        choice = int(input("Select item number to order: ")) - 1
-        quantity = int(input("Enter quantity to order: "))
+    while True:
+        try:
+            choice = int(input("Select item number to order: ")) - 1
+            if choice < 0 or choice >= len(supplier.items_supplied):
+                raise ValueError("Invalid item selection.")
+            break
+        except (ValueError, IndexError) as e:
+            print(f"Error: {e}. Please select a valid item number.")
 
+    try:
+        quantity = int(input("Enter quantity to order: "))
         item = supplier.items_supplied[choice]
+
         order = warehouse.order_from_supplier(supplier, item, quantity)
 
         print(f"Ordered {quantity} of {item.name} from {supplier.name}.")
-
-    except (ValueError, IndexError):
-        print("Invalid input or selection.")
+    except ValueError as e:
+        print(f"Error: {e}. Order not placed.")
 
 
 def view_inventory(warehouse):
@@ -125,13 +132,15 @@ def edit_inventory_prices(warehouse):
 
 
 def edit_inventory_thresholds(warehouse):
-    inventory = warehouse.inventory.get_full_item_info()
-    if not inventory:
-        print("Inventory is empty.")
+    try:
+        inventory = warehouse.inventory.get_full_item_info()
+    except ValueError as e:
+        print(f"Error: {e}")
         return
 
     print("\n--- Edit Inventory Stock Thresholds ---")
     items = list(inventory.keys())
+    
     for idx, item in enumerate(items, start=1):
         _, current_threshold = inventory[item]
         print(f"{idx}. {item.name} (Current threshold: {current_threshold})")
@@ -141,8 +150,12 @@ def edit_inventory_thresholds(warehouse):
         if 1 <= choice <= len(items):
             item = items[choice - 1]
             new_threshold = int(input(f"Enter new threshold for {item.name}: "))
-            warehouse.inventory.set_threshold(item, new_threshold)
-            print(f"Threshold for {item.name} updated to {new_threshold}.")
+            
+            try:
+                warehouse.inventory.set_threshold(item.name, new_threshold)
+                print(f"Threshold for {item.name} updated to {new_threshold}.")
+            except ValueError as e:
+                print(f"Error: {e}")
         else:
             print("Invalid selection.")
     except ValueError:
@@ -200,7 +213,7 @@ def manage_finances(finance_compiler):
 def view_all_orders(finance_compiler):
     print("\n--- View All Orders ---")
     summaries = finance_compiler.summarise_orders()
-    
+
     headers = ["Order ID", "Item", "Qty", "Price", "Total", "Buyer", "Seller", "Timestamp"]
     print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<5} {headers[3]:<7} {headers[4]:<8} {headers[5]:<15} {headers[6]:<15} {headers[7]}")
     print("-" * 95)

@@ -49,6 +49,7 @@ def create_mock_orders_to_supplier(supplier_manager, warehouse):
 
     # Update price of gold ore in the warehouse inventory, turns over a profit
     warehouse.inventory.update_price("Gold Ore", 500)
+    warehouse.inventory.set_threshold
 
 
 def create_mock_orders_to_warehouse(customer_manager, warehouse):

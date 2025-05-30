@@ -27,12 +27,12 @@ class Inventory:
     def check_stock(self, item: Item) -> int:
         return self.stock.get(item, (0, 0))[0]
 
-    def set_threshold(self, item: Item, threshold: int) -> None:
-        if item in self.stock:
-            quantity, _ = self.stock[item]
-            self.stock[item] = (quantity, threshold)
-        else:
-            raise ValueError("Item not found in inventory")
+    def set_threshold(self, item_name: str, new_threshold: int) -> None:
+        for item, (quantity, threshold) in self.stock.items():
+            if item.name == item_name:
+                self.stock[item] = (quantity, new_threshold)
+                return
+        raise ValueError(f"Item '{item_name}' not found in inventory.")
 
     def update_price(self, item_name: str, new_price: float) -> None:
         for item in self.stock.keys():
@@ -55,6 +55,6 @@ class Inventory:
             print("No items in inventory.")
             return {}
         return {item: (qty, threshold) for item, (qty, threshold) in self.stock.items()}
-        
+
     def get_full_item_info(self) -> Dict[Item, Tuple[int, int]]:
         return dict(self.stock)
