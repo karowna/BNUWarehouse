@@ -44,6 +44,8 @@ class Inventory:
     def low_stock_alerts(self) -> List[Item]:
         return [item for item, (qty, threshold) in self.stock.items() if qty < threshold]
 
+
+
     def get_all_items(self) -> Dict[Item, int]:
         return {item: qty for item, (qty, _) in self.stock.items()}
 
