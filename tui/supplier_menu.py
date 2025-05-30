@@ -27,11 +27,10 @@ def supplier_sign_up(supplier_manager):
 def supplier_sign_in(supplier_manager):
     supplier_id = input("Enter your supplier ID: ")
     supplier = supplier_manager.get_supplier_by_id(supplier_id)
+    
     if supplier:
         print(f"\nWelcome back, {supplier.name}!")
         supplier_menu(supplier_manager, supplier)
-    else:
-        print("Supplier not found. Please sign up first.")
 
 def supplier_menu(supplier_manager, supplier):
     while True:

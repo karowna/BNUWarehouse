@@ -50,16 +50,17 @@ class SupplierManager:
         self.suppliers[supplier.supplier_id] = supplier
         return supplier
 
-    def get_supplier_by_id(self, supplier_id: str):
-        """Retrieve a supplier by their ID, or raise an error if not found or input is invalid."""
-        if not isinstance(supplier_id, str) or not supplier_id.strip():
-            raise ValueError("Invalid supplier ID format. Please provide a non-empty string.")
+    def get_supplier_by_id(self, customer_id):
+        """Retrieve a supplier by their ID."""
+        if not self.customers:
+            print("No suppliers available.")
+            return None 
 
-        supplier = self.suppliers.get(supplier_id)
-        if not supplier:
-            raise ValueError(f"Supplier with ID '{supplier_id}' not found.")
-        
-        return supplier
+        if customer_id not in self.customers:
+            print(f"supplier with ID {customer_id} not found.")
+            return None
+
+        return self.customers[customer_id]
 
 
     def get_supplier_items(self, supplier_id):
