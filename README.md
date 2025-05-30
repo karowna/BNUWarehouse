@@ -6,6 +6,12 @@ Use for opening the program
 python3 -m tui.main.py
 ```
 
+Use for opening the program with mock data entered already
+
+```
+python3 -m tui.main.py --mock
+```
+
 Use for running unit tests
 ```
 coverage run -m unittest discover && coverage report && coverage html
@@ -20,3 +26,4 @@ To format the code nicely use
 ```
 black .
 ```
+
