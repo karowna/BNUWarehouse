@@ -1,5 +1,6 @@
 from app.person import Person
 
+
 class Customer(Person):
     _customer_counter = 1  # Class-level counter to keep track of created customers
 
@@ -28,7 +29,6 @@ class Customer(Person):
             return None
         return self.order_history
 
-
     def add_order(self, order):
         """Add an order to the customer's order history."""
         self.order_history.append(order)
@@ -48,14 +48,13 @@ class CustomerManager:
         """Retrieve a customer by their ID."""
         if not self.customers:
             print("No customers available.")
-            return None 
+            return None
 
         if customer_id not in self.customers:
             print(f"Customer with ID {customer_id} not found.")
             return None
 
         return self.customers[customer_id]
-
 
     def delete_customer(self, customer_id):
         """Delete a customer by their ID."""

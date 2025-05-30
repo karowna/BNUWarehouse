@@ -1,6 +1,7 @@
 from app.person import Person
 from app.item import Item
 
+
 class Supplier(Person):
     _supplier_counter = 1  # Class-level counter to keep track of created suppliers
 
@@ -54,7 +55,7 @@ class SupplierManager:
         """Retrieve a supplier by their ID."""
         if not self.suppliers:
             print("No suppliers available.")
-            return None 
+            return None
 
         if supplier_id not in self.suppliers:
             print(f"supplier with ID {supplier_id} not found.")
@@ -62,32 +63,39 @@ class SupplierManager:
 
         return self.suppliers[supplier_id]
 
-
     def get_supplier_items(self, supplier_id):
         """Retrieve all items supplied by a given supplier."""
         supplier = self.get_supplier_by_id(supplier_id)
-        
+
         if not supplier:
             raise ValueError(f"Supplier with ID {supplier_id} not found.")
-        
+
         if not supplier.items_supplied:
             raise ValueError(f"No items found for supplier with ID {supplier_id}.")
-        
+
         return supplier.items_supplied
 
-
-    def create_supplier_item(self, supplier_id, name=None, description=None, price=None, item=None):
+    def create_supplier_item(
+        self, supplier_id, name=None, description=None, price=None, item=None
+    ):
         """Create a new item for the given supplier."""
         supplier = self.get_supplier_by_id(supplier_id)
         if not supplier:
             raise ValueError(f"No supplier found with ID {supplier_id}")
-        
-        if any(existing_item.name == name and existing_item.description == description for existing_item in supplier.items_supplied):
-            raise ValueError(f"Item '{name}' with description '{description}' already exists.")
+
+        if any(
+            existing_item.name == name and existing_item.description == description
+            for existing_item in supplier.items_supplied
+        ):
+            raise ValueError(
+                f"Item '{name}' with description '{description}' already exists."
+            )
 
         if item is None:
             if None in (name, description, price):
-                raise ValueError("To create a new item, name, description, and price must be provided.")
+                raise ValueError(
+                    "To create a new item, name, description, and price must be provided."
+                )
             item = Item(name, description, price, supplier)
         supplier.add_item(item)
         return item

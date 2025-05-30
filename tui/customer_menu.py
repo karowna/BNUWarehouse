@@ -6,21 +6,24 @@ def customer_login(customer_manager, warehouse):
         print("0. Back to Main Menu")
         choice = input("Enter your choice: ")
 
-        if choice == '1':
+        if choice == "1":
             sign_up(customer_manager)
-        elif choice == '2':
+        elif choice == "2":
             sign_in(customer_manager, warehouse)
-        elif choice == '0':
+        elif choice == "0":
             break
         else:
             print("Invalid choice. Please try again.")
+
 
 def sign_up(customer_manager):
     name = input("Enter your name: ")
     email = input("Enter your email: ")
     try:
         customer = customer_manager.create_customer(name, email)
-        print(f"Customer {name} created successfully! Your customer ID is {customer.customer_id}. Remember it!")
+        print(
+            f"Customer {name} created successfully! Your customer ID is {customer.customer_id}. Remember it!"
+        )
     except ValueError as e:
         print(e)
 
@@ -46,21 +49,22 @@ def customer_menu(customer, warehouse):
         print("0. Log Out")
         choice = input("Enter your choice: ")
 
-        if choice == '1':
+        if choice == "1":
             browse_warehouse_items(warehouse)
-        elif choice == '2':
+        elif choice == "2":
             place_order(customer, warehouse)
-        elif choice == '3':
+        elif choice == "3":
             view_order_history(customer)
-        elif choice == '4':
+        elif choice == "4":
             update_profile(customer)
-        elif choice == '5':
+        elif choice == "5":
             view_profile(customer)
-        elif choice == '0':
+        elif choice == "0":
             print("Logging out...")
             break
         else:
             print("Invalid choice, please try again.")
+
 
 def browse_warehouse_items(warehouse):
     """Allow the customer to browse available items in the warehouse."""
@@ -68,7 +72,9 @@ def browse_warehouse_items(warehouse):
     filtered_items = warehouse.get_available_items()
 
     for item, quantity in filtered_items.items():
-        print(f"Name: {item.name}, Price: £{item.price:.2f}, Quantity Available: {quantity}")
+        print(
+            f"Name: {item.name}, Price: £{item.price:.2f}, Quantity Available: {quantity}"
+        )
 
 
 def place_order(customer, warehouse):
@@ -97,32 +103,47 @@ def place_order(customer, warehouse):
 
 
 def view_profile(customer):
-    """Display the customer's profile information.""" # Can just access the customer object directly
+    """Display the customer's profile information."""  # Can just access the customer object directly
     print(f"\n--- Profile of {customer.name} ---")
     print(f"Customer ID: {customer.customer_id}")
     print(f"Email: {customer.email}")
+
 
 def update_profile(customer):
     """Update the customer's profile information."""
     print("\n--- Update Profile ---")
     name = input("Enter new name (leave blank to keep current): ")
     email = input("Enter new email (leave blank to keep current): ")
-    
+
     customer.update_profile(name=name, email=email)
-    
+
     print("Profile updated successfully!")
+
 
 def view_order_history(customer):
     """Display the customer's order history."""
     print("\n--- Order History ---")
-    
-    headers = ["Order ID", "Item", "Quantity", "Price", "Total", "Seller", "Status", "Timestamp"]
-    print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<8} {headers[3]:<8} {headers[4]:<8} "
-          f"{headers[5]:<15} {headers[6]:<10} {headers[7]}")
+
+    headers = [
+        "Order ID",
+        "Item",
+        "Quantity",
+        "Price",
+        "Total",
+        "Seller",
+        "Status",
+        "Timestamp",
+    ]
+    print(
+        f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<8} {headers[3]:<8} {headers[4]:<8} "
+        f"{headers[5]:<15} {headers[6]:<10} {headers[7]}"
+    )
     print("-" * 105)
 
     for order in customer.order_history:
-        print(f"{order.order_id:<10} {order.item.name:<15} {order.quantity:<8} "
-              f"£{order.item.price:<7.2f} £{order.total_price:<7.2f} "
-              f"{getattr(order.seller, 'name', 'Warehouse'):<15} {order.status:<10} "
-              f"{order.timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
+        print(
+            f"{order.order_id:<10} {order.item.name:<15} {order.quantity:<8} "
+            f"£{order.item.price:<7.2f} £{order.total_price:<7.2f} "
+            f"{getattr(order.seller, 'name', 'Warehouse'):<15} {order.status:<10} "
+            f"{order.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
+        )

@@ -13,6 +13,7 @@ USE_MOCK_DATA = "--mock" in sys.argv
 
 if USE_MOCK_DATA:
     from tests.mock_data import import_mock_data
+
     customer_manager, supplier_manager, warehouse = import_mock_data()
 else:
     customer_manager = CustomerManager()
@@ -31,13 +32,13 @@ def main_menu(supplier_manager, customer_manager, warehouse):
         print("0. Exit")
         choice = input("Enter your choice: ")
 
-        if choice == '1':
+        if choice == "1":
             admin_login(warehouse, supplier_manager, finance_compiler)
-        elif choice == '2':
+        elif choice == "2":
             customer_login(customer_manager, warehouse)
-        elif choice == '3':
+        elif choice == "3":
             supplier_login(supplier_manager)
-        elif choice == '0':
+        elif choice == "0":
             print("Exiting...")
             break
         else:

@@ -14,11 +14,11 @@ def admin_login(warehouse, supplier_manager, finance_compiler):
         print("0. Back to Main Menu")
         choice = input("Enter your choice: ")
 
-        if choice == '1':
+        if choice == "1":
             manage_stock(warehouse, supplier_manager)
-        elif choice == '2':
+        elif choice == "2":
             manage_finances(finance_compiler)
-        elif choice == '0':
+        elif choice == "0":
             break
         else:
             print("Invalid choice. Please try again.")
@@ -32,24 +32,25 @@ def manage_stock(warehouse, supplier_manager):
         print("2. View Inventory")
         print("3. Edit Inventory Prices")
         print("4. Edit Inventory Stock Thresholds")
-        print("5. Mark Order as Received") 
+        print("5. Mark Order as Received")
         print("0. Back to Admin Menu")
         choice = input("Enter your choice: ")
 
-        if choice == '1':
+        if choice == "1":
             order_from_supplier(warehouse, supplier_manager)
-        elif choice == '2':
+        elif choice == "2":
             view_inventory(warehouse)
-        elif choice == '3':
+        elif choice == "3":
             edit_inventory_prices(warehouse)
-        elif choice == '4':
+        elif choice == "4":
             edit_inventory_thresholds(warehouse)
-        elif choice == '5':  # Option to mark order as received
+        elif choice == "5":
             mark_order_as_received(warehouse)
-        elif choice == '0':
+        elif choice == "0":
             break
         else:
             print("Invalid choice. Please try again.")
+
 
 def order_from_supplier(warehouse, supplier_manager):
     print("\n--- Order from Supplier ---")
@@ -64,8 +65,10 @@ def order_from_supplier(warehouse, supplier_manager):
         print(f"ID: {supplier.supplier_id} | Name: {supplier.name}")
 
     while True:
-        supplier_id = input("Enter the ID of the supplier to order from (or 'q' to cancel): ").strip()
-        if supplier_id.lower() == 'q':
+        supplier_id = input(
+            "Enter the ID of the supplier to order from (or 'q' to cancel): "
+        ).strip()
+        if supplier_id.lower() == "q":
             return
 
         try:
@@ -140,7 +143,7 @@ def edit_inventory_thresholds(warehouse):
 
     print("\n--- Edit Inventory Stock Thresholds ---")
     items = list(inventory.keys())
-    
+
     for idx, item in enumerate(items, start=1):
         _, current_threshold = inventory[item]
         print(f"{idx}. {item.name} (Current threshold: {current_threshold})")
@@ -150,7 +153,7 @@ def edit_inventory_thresholds(warehouse):
         if 1 <= choice <= len(items):
             item = items[choice - 1]
             new_threshold = int(input(f"Enter new threshold for {item.name}: "))
-            
+
             try:
                 warehouse.inventory.set_threshold(item.name, new_threshold)
                 print(f"Threshold for {item.name} updated to {new_threshold}.")
@@ -165,20 +168,18 @@ def edit_inventory_thresholds(warehouse):
 def mark_order_as_received(warehouse):
     """Allow the admin to mark an order as received."""
     print("\n--- Mark Order as Received ---")
-    
-    # Fetch pending orders using the Warehouse class method
+
     pending_orders = warehouse.list_pending_orders()
-    
-    # List the pending orders for the admin to choose from
+
     for idx, order in enumerate(pending_orders, start=1):
-        print(f"{idx}. Order #{order.order_id}: {order.item.name} (Quantity: {order.quantity}) - Status: {order.status}")
+        print(
+            f"{idx}. Order #{order.order_id}: {order.item.name} (Quantity: {order.quantity}) - Status: {order.status}"
+        )
 
     try:
-        # Allow the admin to select an order to mark as received
         choice = int(input("Select order number to mark as received: ")) - 1
         if 0 <= choice < len(pending_orders):
             order_to_mark = pending_orders[choice]
-            # Call the Warehouse class method to mark the order as received
             warehouse.mark_order_as_received(order_to_mark.order_id)
         else:
             print("Invalid selection.")
@@ -196,15 +197,15 @@ def manage_finances(finance_compiler):
         print("4. Export Financial Report")
         print("0. Back to Admin Menu")
         choice = input("Enter your choice: ")
-        if choice == '1':
+        if choice == "1":
             view_all_orders(finance_compiler)
-        elif choice == '2':
+        elif choice == "2":
             quick_financial_overview(finance_compiler)
-        elif choice == '3':
+        elif choice == "3":
             deep_dive_financials(finance_compiler)
-        elif choice == '4':
+        elif choice == "4":
             export_financial_report(finance_compiler)
-        elif choice == '0':
+        elif choice == "0":
             break
         else:
             print("Invalid choice. Please try again.")
@@ -214,12 +215,26 @@ def view_all_orders(finance_compiler):
     print("\n--- View All Orders ---")
     summaries = finance_compiler.summarise_orders()
 
-    headers = ["Order ID", "Item", "Qty", "Price", "Total", "Buyer", "Seller", "Timestamp"]
-    print(f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<5} {headers[3]:<7} {headers[4]:<8} {headers[5]:<15} {headers[6]:<15} {headers[7]}")
+    headers = [
+        "Order ID",
+        "Item",
+        "Qty",
+        "Price",
+        "Total",
+        "Buyer",
+        "Seller",
+        "Timestamp",
+    ]
+    print(
+        f"{headers[0]:<10} {headers[1]:<15} {headers[2]:<5} {headers[3]:<7} {headers[4]:<8} {headers[5]:<15} {headers[6]:<15} {headers[7]}"
+    )
     print("-" * 95)
 
     for s in summaries:
-        print(f"{s['order_id']:<10} {s['item_name']:<15} {s['quantity']:<5} £{s['item_price']:<6.2f} £{s['total_price']:<7.2f} {s['buyer_name']:<15} {s['seller_name']:<15} {s['timestamp']}")
+        print(
+            f"{s['order_id']:<10} {s['item_name']:<15} {s['quantity']:<5} £{s['item_price']:<6.2f} £{s['total_price']:<7.2f} {s['buyer_name']:<15} {s['seller_name']:<15} {s['timestamp']}"
+        )
+
 
 def quick_financial_overview(finance_compiler):
     """Display a quick financial overview of revenue, costs, and profit."""
@@ -227,28 +242,35 @@ def quick_financial_overview(finance_compiler):
     total_revenue = finance_compiler.total_customer_revenue()
     total_costs = finance_compiler.total_supplier_costs()
     profit = finance_compiler.calculate_profit()
-    
+
     print(f"Total Revenue from Customers: £{total_revenue:.2f}")
     print(f"Total Costs from Suppliers: £{total_costs:.2f}")
     print(f"Total Profit: £{profit:.2f}")
+
 
 def deep_dive_financials(finance_compiler):
     """Provide a detailed analysis of orders and financials."""
     print("\n--- Deep Dive into Financials ---")
     customer_orders = finance_compiler.get_customer_orders()
     supplier_orders = finance_compiler.get_supplier_orders()
-    
-    # Display orders
+
     print("\nCustomer Orders:")
     for order in customer_orders:
-        print(f"Order ID: {order.order_id}, Item: {order.item.name}, Quantity: {order.quantity}, Total: £{order.total_price:.2f}")
-    
+        print(
+            f"Order ID: {order.order_id}, Item: {order.item.name}, Quantity: {order.quantity}, Total: £{order.total_price:.2f}"
+        )
+
     print("\nSupplier Orders:")
     for order in supplier_orders:
-        print(f"Order ID: {order.order_id}, Item: {order.item.name}, Quantity: {order.quantity}, Total: £{order.total_price:.2f}")
+        print(
+            f"Order ID: {order.order_id}, Item: {order.item.name}, Quantity: {order.quantity}, Total: £{order.total_price:.2f}"
+        )
+
 
 def export_financial_report(finance_compiler):
     """Export a detailed financial report of all orders to CSV."""
-    file_path = input("Enter the file path to export the financial report (append .csv to the end): ")
+    file_path = input(
+        "Enter the file path to export the financial report (append .csv to the end): "
+    )
     finance_compiler.export_orders_to_csv(finance_compiler.get_all_orders(), file_path)
     print(f"Financial report exported to {file_path}")
