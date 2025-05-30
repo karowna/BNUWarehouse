@@ -48,22 +48,18 @@ class Warehouse:
         return pending_orders
 
     def get_available_items(self) -> Dict[Item, int]:
-        """Returns items that are above the threshold and marked as 'received', with error handling."""
+        """Returns items that are above the threshold and marked as 'received'."""
         available_items = {}
 
         for item, (quantity, threshold) in self.inventory.get_full_item_info().items():
-            try:
-                if quantity > threshold and any(order.item == item and order.status == "received" for order in self.orders):
-                    available_items[item] = quantity
-            except Exception as e:
-                print(f"Error processing item '{item.name}': {e}")
-                continue
+            if quantity > threshold and any(order.item == item and order.status == "received" for order in self.orders):
+                available_items[item] = quantity
 
-        # Check if no items are available
         if not available_items:
             print("No items are currently available for purchase.")
         
         return available_items
+
 
 
     def _record_transaction(self, item: Item, quantity: int, buyer, seller) -> Order:

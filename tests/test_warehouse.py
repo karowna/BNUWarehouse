@@ -278,6 +278,56 @@ class TestWarehouse(unittest.TestCase):
         new_supplier = self.supplier_manager.create_supplier(name="Supplier B", email="supplierb@example.com")
         with self.assertRaises(ValueError):
             self.warehouse.order_from_supplier(new_supplier, self.cloned_item, 5)  # No items available
+
+    def test_view_inventory_empty(self):
+        """Test that view_inventory returns an empty dictionary when inventory is empty."""
+        empty_warehouse = Warehouse(name="Empty Warehouse")
+        result = empty_warehouse.view_inventory()
+        self.assertEqual(result, {})
+
+    def test_mark_order_as_received_order_not_found(self):
+        """Test that mark_order_as_received handles non-existent order ID gracefully."""
+        result = self.warehouse.mark_order_as_received(order_id=9999)  # ID that doesn't exist
+        self.assertIsNone(result)
+
+    def test_mark_order_as_received_already_received(self):
+        """Test that mark_order_as_received does not reprocess an already received order."""
+        order = self.warehouse.order_from_supplier(self.supplier, self.cloned_item, 5)
+        self.warehouse.mark_order_as_received(order.order_id)  # First time
+        result = self.warehouse.mark_order_as_received(order.order_id)  # Second time (should be ignored)
+        self.assertIsNone(result)
+
+    def test_list_pending_orders_empty(self):
+        """Test that list_pending_orders returns an empty list when there are no pending orders."""
+        result = self.warehouse.list_pending_orders()
+        self.assertEqual(result, [])
+
+    def test_get_available_items_with_exception_handling(self):
+        """Test that get_available_items handles exceptions gracefully."""
+        # Add a malformed item to simulate an error
+        class BrokenItem:
+            def __init__(self):
+                self.name = "Broken"
+
+            def __eq__(self, other):
+                raise Exception("Equality check failed")
+
+            def __hash__(self):
+                return hash("Broken")
+
+        broken_item = BrokenItem()
+        self.warehouse.inventory.stock[broken_item] = (10, 5)
+        result = self.warehouse.get_available_items()
+        self.assertIsInstance(result, dict)  # Should still return a dictionary
+        self.assertNotIn(broken_item, result)  # Broken item should be skipped
+
+    def test_record_transaction_adds_to_customer_history(self):
+        """Test that _record_transaction adds the order to the customer's history."""
+        initial_history_length = len(self.customer.order_history)
+        order = self.warehouse._record_transaction(self.item, 2, buyer=self.customer, seller=self.warehouse)
+        self.assertIn(order, self.customer.order_history)
+        self.assertEqual(len(self.customer.order_history), initial_history_length + 1)
+
             
 
 if __name__ == "__main__":
