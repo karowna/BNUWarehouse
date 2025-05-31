@@ -1,5 +1,6 @@
 # tui/admin_menu.py
 
+
 def admin_login(warehouse, supplier_manager, finance_compiler):
     while True:
         print("\n--- Admin Alerts ---")
