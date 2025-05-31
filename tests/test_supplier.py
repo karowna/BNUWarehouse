@@ -108,7 +108,7 @@ class TestSupplier(unittest.TestCase):
         with patch("builtins.print") as mock_print:
             supplier.remove_item(item)
             mock_print.assert_called_with(f"Item {item.name} not found in the list.")
-    
+
     def test_remove_item_from_supplier_invalid_id(self):
         """Test removing an item from a supplier with an invalid ID."""
         supplier = self.supplier_manager.create_supplier("Steve", "steve@exmaple.com")
