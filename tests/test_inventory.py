@@ -1,3 +1,5 @@
+# /tests/test_inventory.py
+
 import unittest
 from app.inventory import Inventory
 

@@ -1,3 +1,5 @@
+# tui/main.py
+
 import sys
 
 from tui.admin_menu import admin_login

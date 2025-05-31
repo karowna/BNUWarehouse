@@ -1,3 +1,5 @@
+# /app/item.py
+
 class Item:
     def __init__(self, name: str, description: str, price: float, supplier=None):
         self.name = name

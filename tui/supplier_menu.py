@@ -1,3 +1,5 @@
+# tui/supplier_menu.py
+
 def supplier_login(supplier_manager):
     while True:
         print("\n--- Supplier Login ---")

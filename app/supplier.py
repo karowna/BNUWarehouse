@@ -1,3 +1,5 @@
+# /app/supplier.py
+
 from app.person import Person
 from app.item import Item
 

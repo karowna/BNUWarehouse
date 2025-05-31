@@ -1,3 +1,5 @@
+# /tests/mock_data.py
+
 from app.supplier import SupplierManager
 from app.customer import CustomerManager
 from app.warehouse import Warehouse
