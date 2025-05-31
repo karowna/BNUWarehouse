@@ -1,3 +1,6 @@
+# tui/customer_menu.py
+
+
 def customer_login(customer_manager, warehouse):
     while True:
         print("\n--- Customer Login ---")

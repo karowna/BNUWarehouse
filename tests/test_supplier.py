@@ -1,3 +1,5 @@
+# tests/test_supplier.py
+
 import unittest
 from app.supplier import Supplier, SupplierManager
 from app.item import Item

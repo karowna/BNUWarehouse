@@ -1,3 +1,5 @@
+# /app/warehouse.py
+
 from typing import List, Dict
 from app.inventory import Inventory
 from app.customer import Customer
