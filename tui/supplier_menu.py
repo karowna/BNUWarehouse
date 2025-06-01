@@ -69,7 +69,7 @@ def supplier_menu(supplier_manager, supplier):
 
 
 def view_supplier_profile(supplier):
-    print(f"\n--- Profile of {customer.name} ---")
+    print(f"\n--- Profile of {supplier.name} ---")
     print(f"Email: {supplier.email}")
     print(f"Supplier ID: {supplier.supplier_id}")
 
