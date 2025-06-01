@@ -10,7 +10,6 @@ from app.item import Item
 class Warehouse:
     def __init__(self, name: str):
         self.name = name
-        self.suppliers: List["Supplier"] = []
         self.inventory = Inventory()
         self.orders: List[Order] = []
 
@@ -44,7 +43,7 @@ class Warehouse:
 
     def list_pending_orders(self):
         """Prints and returns a list of all pending orders."""
-        pending_orders = [order for order in self.orders if order.status != "received"]
+        pending_orders = [order for order in self.orders if order.status != "received" or order.status !="delivered"]
 
         if not pending_orders:
             print("No pending orders to mark as received.")

@@ -97,13 +97,13 @@ def create_item_for_supplier(supplier_manager, supplier):
 
 
 def view_supplier_items(supplier_manager, supplier):
-    items = supplier_manager.get_supplier_items(supplier.supplier_id)
-    if items:
+    try:
+        items = supplier_manager.get_supplier_items(supplier.supplier_id)
         print("\n--- Items Supplied ---")
         for item in items:
             print(f"{item.name}: {item.description} - £{item.price:.2f}")
-    else:
-        print("No items found.")
+    except ValueError as e:
+        print(str(e))
 
 
 def remove_item_from_supplier(supplier_manager, supplier):
