@@ -103,15 +103,18 @@ class TestSupplier(unittest.TestCase):
         """Test removing an item that does not exist in the supplier's inventory."""
         supplier = self.supplier_manager.create_supplier("Steve", "steve@example.com")
         item = Item(
-            name="Dirt", description="Just dirt", price=10.0
+            name="Dirt", description="Just dirt", price=10.0, supplier=supplier
         )  # Create an item not in the supplier's inventory
         with patch("builtins.print") as mock_print:
             supplier.remove_item(item)
             mock_print.assert_called_with(f"Item {item.name} not found in the list.")
 
-    def test_remove_item_from_none_supplier(self):
-        """Test removing an item from a supplier that does not exist."""
-        item = Item(name="Dirt", description="Just dirt", price=10.0)
+    def test_remove_item_from_supplier_invalid_id(self):
+        """Test removing an item from a supplier with an invalid ID."""
+        supplier = self.supplier_manager.create_supplier("Steve", "steve@exmaple.com")
+        item = self.supplier_manager.create_supplier_item(
+            supplier.supplier_id, name="Dirt", description="Just dirt", price=10.0
+        )
         with self.assertRaises(ValueError) as context:
             self.supplier_manager.remove_item_from_supplier("su_999", item)
         self.assertIn("Supplier with ID su_999 not found", str(context.exception))

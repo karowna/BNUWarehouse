@@ -2,11 +2,11 @@
 
 
 class Item:
-    def __init__(self, name: str, description: str, price: float, supplier=None):
+    def __init__(self, name: str, description: str, price: float, supplier):
         self.name = name
         self.description = description
         self.price = price
-        self.supplier = supplier  # Optional
+        self.supplier = supplier
 
     def __str__(self):
         return f"{self.name} - {self.description} (£{self.price:.2f})"
