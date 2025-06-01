@@ -1,0 +1,3 @@
+Order ID,Item,Quantity,Total Price,Buyer,Seller,Status,Date
+1,Brick,500,£250.00,Main Warehouse,bikal,received,2025-06-01 14:56:32
+2,Brick,450,£225.00,BilalCustomer,Main Warehouse,delivered,2025-06-01 15:00:20

@@ -21,4 +21,3 @@ To format the code nicely use (in root)
 ```
 black .
 ```
-

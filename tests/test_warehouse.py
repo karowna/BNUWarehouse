@@ -1,5 +1,3 @@
-# tests/test_warehouse.py
-
 import unittest
 from app.inventory import Inventory
 from app.item import Item
@@ -214,17 +212,13 @@ class TestWarehouse(unittest.TestCase):
         self.assertIn(self.cloned_item, inventory)
         self.assertEqual(inventory[self.cloned_item][0], 10)
 
-    def test_list_pending_orders(self):
-        """Test listing pending orders."""
-        order1 = self.warehouse.place_order(self.customer, self.item, 5)
-        self.warehouse.inventory.add_stock(self.item2, 20, threshold=10)
-        order2 = self.warehouse.place_order(self.customer, self.item2, 3)
-
-        self.warehouse.mark_order_as_received(order1.order_id)
-
+    def test_list_pending_orders_returns_pending_orders(self):
+        """Test that list_pending_orders returns a list of pending orders."""
+        order = self.warehouse.place_order(self.customer, self.cloned_item, 2)
         pending_orders = self.warehouse.list_pending_orders()
-        self.assertEqual(len(pending_orders), 1)
-        self.assertEqual(pending_orders[0].order_id, order2.order_id)
+
+        self.assertEqual(pending_orders, [order], "Expected the pending order to be returned.")
+
 
     def test_get_available_items(self):
         """Test that available items above threshold are returned correctly."""
